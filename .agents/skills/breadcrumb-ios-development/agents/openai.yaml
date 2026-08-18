@@ -1,0 +1,4 @@
+interface:
+  display_name: "Breadcrumb iOS Development"
+  short_description: "Build Breadcrumb in small, testable iOS slices"
+  default_prompt: "Use $breadcrumb-ios-development to implement the next approved Breadcrumb MVP slice."
