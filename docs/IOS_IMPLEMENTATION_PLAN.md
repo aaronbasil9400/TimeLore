@@ -32,6 +32,8 @@ Acceptance criteria:
 - Unit and UI test targets run.
 - A temporary in-memory model container is available to previews and tests.
 
+**Status:** Project, shared scheme, SwiftData container, and in-memory previews are implemented. The app target builds for the generic iOS Simulator SDK; test execution needs an available simulator runtime.
+
 ## Milestone 1 — Capture and Persist
 
 Implement the reminder model, open-reminders list, and create form.
@@ -43,6 +45,8 @@ Acceptance criteria:
 - A saved reminder survives app termination and relaunch.
 - The list has a useful empty state and deterministic ordering.
 - Unit tests cover validation and ordering.
+
+**Status:** Initial implementation created. App, unit-test, and UI-test targets compile for the generic iOS Simulator SDK. Simulator execution and persistence verification remain pending an available runtime.
 
 ## Milestone 2 — Inspect and Maintain
 
