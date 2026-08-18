@@ -19,7 +19,7 @@ Create the project in Xcode with these settings:
 
 Commit the shared scheme. Keep signing team settings user-local where Xcode permits. Do not enable CloudKit or other capabilities for the MVP.
 
-The current environment has Swift command-line tools but does not expose the full `xcodebuild` tool, so initial project generation and simulator verification must happen on a Mac with full Xcode selected.
+Full Xcode is installed, while the active `xcode-select` path points to Command Line Tools. Use Xcode’s absolute `xcodebuild` path or select the full Xcode developer directory before command-line builds.
 
 ## Milestone 0 — Walking Skeleton
 
@@ -32,7 +32,7 @@ Acceptance criteria:
 - Unit and UI test targets run.
 - A temporary in-memory model container is available to previews and tests.
 
-**Status:** Project, shared scheme, SwiftData container, and in-memory previews are implemented. The app target builds for the generic iOS Simulator SDK; test execution needs an available simulator runtime.
+**Status:** Project, shared scheme, SwiftData container, and in-memory previews are implemented. App and tests build, and the suite runs on the installed iPhone 17 simulator.
 
 ## Milestone 1 — Capture and Persist
 
@@ -50,15 +50,20 @@ Acceptance criteria:
 
 ## Milestone 2 — Inspect and Maintain
 
-Add detail, edit, complete, reopen, and delete flows.
+Add detail, edit, complete, reopen, archive, restore, delete, and tag-organization flows.
 
 Acceptance criteria:
 
 - Edits persist and update `updatedAt`.
 - Completion records `completedAt`; reopening clears it.
 - Completed reminders appear separately and are not lost.
+- Open, Completed, and Archived sections collapse independently and remember the user’s choices.
+- Archiving preserves completion status; restoring returns a reminder to the correct section.
+- Reminders support multiple normalized tags and tag filtering.
 - Delete requires confirmation.
-- Unit tests cover status transitions.
+- Unit and UI tests cover status transitions and maintenance flows.
+
+**Status:** Implemented and verified. Fifteen domain/persistence tests and four UI tests pass on an iPhone 17 simulator, covering edit, complete/reopen, archive/restore, confirmed deletion, tags, and persisted section collapse state.
 
 ## Milestone 3 — Notify Reliably
 
@@ -112,8 +117,8 @@ struct ReminderDraft {
 }
 
 // Persisted Reminder fields:
-// id, title, reason, dueAt, status,
-// createdAt, updatedAt, completedAt
+// id, title, reason, dueAt, status, tags,
+// createdAt, updatedAt, completedAt, archivedAt
 ```
 
 Use the reminder UUID string as the notification request identifier so updates and cancellation are idempotent.

@@ -13,7 +13,7 @@ struct ReminderDraft: Equatable, Sendable {
         reason.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    func validationError(now: Date = .now) -> String? {
+    func validationError(now: Date = .now, allowingPastDueAt originalDueAt: Date? = nil) -> String? {
         if normalizedTitle.isEmpty {
             return "Add a reminder title."
         }
@@ -26,7 +26,7 @@ struct ReminderDraft: Equatable, Sendable {
             return "Keep the context to 2,000 characters or fewer."
         }
 
-        if let dueAt, dueAt <= now {
+        if let dueAt, dueAt <= now, dueAt != originalDueAt {
             return "Choose a future date and time."
         }
 

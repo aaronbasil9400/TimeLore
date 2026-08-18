@@ -30,6 +30,8 @@ Start with one audience: a busy individual who creates personal follow-ups, erra
 - Status: open or completed.
 - Created and last-updated timestamps.
 - Completion timestamp when completed.
+- Archive timestamp when hidden from the main workflow.
+- Zero or more tags.
 
 ### Experiences
 
@@ -38,7 +40,10 @@ Start with one audience: a busy individual who creates personal follow-ups, erra
 - Create and edit form with inline validation.
 - Reminder detail view.
 - Complete and reopen actions.
+- Archive and restore actions that preserve completion status.
 - Delete with confirmation.
+- Independently collapsible Open, Completed, and Archived sections whose state persists.
+- Multi-tag creation, selection, display, and filtering.
 - Case-insensitive local search across title and “why.”
 - Local notification request only when the user first saves a dated reminder.
 - Clear in-app behavior when notification permission is denied.
@@ -76,4 +81,3 @@ Avoid building analytics infrastructure solely for the first internal test; inte
 ## Expansion Gate
 
 Do not start the full memory platform until the core test shows that users repeatedly add context and find it useful. Choose the next feature from observed demand, not the founder inventory. Likely experiments are quick capture, attachments, or sync—one at a time.
-

@@ -18,6 +18,8 @@ The first release is a private, offline reminder app with:
 - A title and optional “why” context.
 - An optional due date and local notification.
 - Open and completed lists.
+- Archiving and independently collapsible status sections.
+- Multi-tag organization and filtering.
 - Local text search.
 - SwiftData persistence.
 
@@ -30,4 +32,3 @@ The aim is to validate whether preserving context makes reminders more useful. O
 - No third-party packages are planned for the MVP.
 
 See the implementation plan for project-creation settings and the first build sequence.
-

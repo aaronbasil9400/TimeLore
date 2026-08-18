@@ -19,9 +19,11 @@ The existing founder documents are vision inputs, not an implementation backlog.
 The first build is local-only and supports:
 
 - Create, view, edit, complete, reopen, and delete reminders.
+- Archive and restore reminders without changing their completion state.
 - Store a title, optional “why,” optional due date, status, and timestamps.
 - Schedule or cancel a local notification for reminders with a due date.
-- Show open and completed reminders.
+- Organize reminders with multiple tags and filter by tag.
+- Show independently collapsible open, completed, and archived sections.
 - Search title and “why” text locally.
 
 Do not add accounts, CloudKit, collaboration, OCR, receipts, automatic location capture, voice transcription, AI, subscriptions, analytics SDKs, or a generalized memory graph unless the active task explicitly changes scope.
@@ -83,4 +85,3 @@ Discover available simulators first and substitute an installed device. Do not c
 - New business logic has focused tests.
 - No deferred feature is pulled into the change accidentally.
 - The working tree contains no unrelated generated artifacts or secrets.
-

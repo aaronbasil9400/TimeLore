@@ -29,4 +29,11 @@ struct ReminderDraftTests {
 
         #expect(draft.validationError(now: referenceDate) == nil)
     }
+
+    @Test func allowsAnExistingOverdueDateWhileEditing() {
+        let overdueDate = referenceDate.addingTimeInterval(-60)
+        let draft = ReminderDraft(title: "Renew passport", dueAt: overdueDate)
+
+        #expect(draft.validationError(now: referenceDate, allowingPastDueAt: overdueDate) == nil)
+    }
 }
