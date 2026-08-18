@@ -20,6 +20,7 @@
 		A10000000000000000000012 /* ReminderLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* ReminderLifecycleTests.swift */; };
 		A10000000000000000000013 /* ReminderTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* ReminderTagTests.swift */; };
 		A10000000000000000000014 /* ReminderPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* ReminderPersistenceTests.swift */; };
+		A10000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		A20000000000000000000015 /* ReminderLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderLifecycleTests.swift; sourceTree = "<group>"; };
 		A20000000000000000000016 /* ReminderTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTagTests.swift; sourceTree = "<group>"; };
 		A20000000000000000000017 /* ReminderPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderPersistenceTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,13 +52,14 @@
 
 /* Begin PBXGroup section */
 		A40000000000000000000001 = {isa = PBXGroup; children = (A40000000000000000000002 /* Breadcrumb */, A40000000000000000000006 /* BreadcrumbTests */, A40000000000000000000007 /* BreadcrumbUITests */, A40000000000000000000008 /* Products */); sourceTree = "<group>"; };
-		A40000000000000000000002 /* Breadcrumb */ = {isa = PBXGroup; children = (A20000000000000000000001 /* BreadcrumbApp.swift */, A40000000000000000000003 /* Models */, A40000000000000000000004 /* Features */); path = Breadcrumb; sourceTree = "<group>"; };
+		A40000000000000000000002 /* Breadcrumb */ = {isa = PBXGroup; children = (A20000000000000000000001 /* BreadcrumbApp.swift */, A40000000000000000000003 /* Models */, A40000000000000000000004 /* Features */, A40000000000000000000009 /* Resources */); path = Breadcrumb; sourceTree = "<group>"; };
 		A40000000000000000000003 /* Models */ = {isa = PBXGroup; children = (A20000000000000000000002 /* Reminder.swift */, A20000000000000000000003 /* ReminderDraft.swift */, A20000000000000000000012 /* ReminderTag.swift */); path = Models; sourceTree = "<group>"; };
 		A40000000000000000000004 /* Features */ = {isa = PBXGroup; children = (A40000000000000000000005 /* Reminders */); path = Features; sourceTree = "<group>"; };
 		A40000000000000000000005 /* Reminders */ = {isa = PBXGroup; children = (A20000000000000000000004 /* ReminderListView.swift */, A20000000000000000000005 /* ReminderEditorView.swift */, A20000000000000000000013 /* ReminderDetailView.swift */, A20000000000000000000014 /* ReminderTagChip.swift */); path = Reminders; sourceTree = "<group>"; };
 		A40000000000000000000006 /* BreadcrumbTests */ = {isa = PBXGroup; children = (A20000000000000000000006 /* ReminderDraftTests.swift */, A20000000000000000000007 /* ReminderSortingTests.swift */, A20000000000000000000015 /* ReminderLifecycleTests.swift */, A20000000000000000000016 /* ReminderTagTests.swift */, A20000000000000000000017 /* ReminderPersistenceTests.swift */); path = BreadcrumbTests; sourceTree = "<group>"; };
 		A40000000000000000000007 /* BreadcrumbUITests */ = {isa = PBXGroup; children = (A20000000000000000000008 /* BreadcrumbUITests.swift */); path = BreadcrumbUITests; sourceTree = "<group>"; };
 		A40000000000000000000008 /* Products */ = {isa = PBXGroup; children = (A20000000000000000000009 /* Breadcrumb.app */, A20000000000000000000010 /* BreadcrumbTests.xctest */, A20000000000000000000011 /* BreadcrumbUITests.xctest */); name = Products; sourceTree = "<group>"; };
+		A40000000000000000000009 /* Resources */ = {isa = PBXGroup; children = (A20000000000000000000018 /* Assets.xcassets */); path = Resources; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -70,7 +73,7 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A80000000000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A80000000000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000015 /* Assets.xcassets in Resources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
