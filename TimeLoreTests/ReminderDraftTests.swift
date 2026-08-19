@@ -15,7 +15,7 @@ struct ReminderDraftTests {
     @Test func rejectsAnEmptyTitle() {
         let draft = ReminderDraft(title: " \n ")
 
-        #expect(draft.validationError(now: referenceDate) == "Add a reminder title.")
+        #expect(draft.validationError(now: referenceDate) == "Enter a reminder title.")
     }
 
     @Test func rejectsAPastDueDate() {

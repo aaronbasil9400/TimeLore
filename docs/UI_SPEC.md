@@ -1,6 +1,6 @@
 # TimeLore UI Specification
 
-Status: beginning-phase implementation contract plus gated post-MVP design direction  
+Status: MVP implementation in progress plus gated post-MVP design direction
 Platform: iPhone, SwiftUI, iOS 26 visual language  
 Primary product name in the current Xcode project: TimeLore  
 User-facing design name: TimeLore
@@ -9,7 +9,7 @@ User-facing design name: TimeLore
 
 This document translates the approved TimeLore boards into an implementation-ready contract. It defines what each page, card, filter, button, gesture, state, and presentation surface does.
 
-- The **MVP sections are actionable now**.
+- The **MVP is in progress**: the reminder foundation is implemented and under acceptance review; recurrence and reminder attachments are the next actionable slices.
 - The **post-MVP sections are concept-only** until the user trial passes the expansion gate.
 - The boards establish hierarchy and intent, not fixed pixel measurements.
 - Native SwiftUI behavior, safe areas, Dynamic Type, VoiceOver, Reduced Transparency, and the active iOS SDK take precedence over literal screenshot geometry.
@@ -25,6 +25,8 @@ Purpose: root hierarchy, tag/filter treatments, Important state, and swipe direc
 ![MVP capture and detail in OLED dark mode](ui/mvp-capture-detail-dark.webp)
 
 Purpose: creation, default tags, reminder detail, overflow actions, delete confirmation, and dark-mode parity.
+
+No approved board currently depicts recurrence or reminder attachments. For those MVP slices, the written page specifications and acceptance criteria in this document control. Use Apple-native repeat controls and system Photos, Files, Contacts, and preview surfaces; do not infer a post-MVP information architecture from the concept boards.
 
 ### Post-MVP concept
 
@@ -44,12 +46,12 @@ Purpose: Project, Person, Place, Trip, Weekly Review, and Settings/Privacy pages
 
 | Layer | Build now | Defer |
 |---|---|---|
-| Reminder core | Title, optional why, optional due date, tags, Important, status, timestamps | Attachments, people, places, projects |
+| Reminder core | Title, optional Notes, optional due date and repeat rule, Priority, tags, Important, status, timestamps, reminder-scoped photo/file/contact-card attachments | People/place relationships and projects |
 | Organization | All, Important, Untagged, tag filters; Open/Completed/Archived | General memory graph |
-| Actions | Create, edit, complete/reopen, flag/unflag, archive/restore, delete | Suggestions and predictive timing |
-| Find | Local title/why search | Semantic and conversational life search |
-| Notify | Local notifications | Cross-device or collaborative notifications |
-| Storage | SwiftData, local-only | Cloud sync and accounts |
+| Actions | Create, edit, complete/reopen, flag/unflag, archive/restore, delete, attach/preview/remove | Suggestions and predictive timing |
+| Find | Local title/Notes search | Semantic and conversational life search; attachment-content indexing |
+| Notify | One-time and recurring local notifications | Cross-device or collaborative notifications |
+| Storage | SwiftData plus app-owned attachment files, local-only | Cloud sync and accounts |
 | UI | Single reminder stack | Timeline/Today/Future/Insights tab architecture |
 
 ## 4. Design language
@@ -78,7 +80,8 @@ Use the system-provided iOS 26 appearance for:
 Do not apply Liquid Glass to:
 
 - Reminder cards.
-- “Why” content.
+- Notes content.
+- Attachment thumbnails and previews.
 - History rows.
 - Charts and data cards.
 - Project, receipt, memory, or result cards.
@@ -161,6 +164,33 @@ The value survives:
 
 Changing Important updates `updatedAt` but must not change `completedAt` or `archivedAt`.
 
+Add an explicit persisted Priority level, separate from Important:
+
+```swift
+var priorityRawValue: Int // 0: none, 1: !, 2: !!, 3: !!!
+```
+
+Priority defaults to none. Changing it updates `updatedAt` but does not alter completion, archive, tags, or Important. Home keeps its due-date order by default; the user can explicitly choose Priority order from the compact Sort menu.
+
+Add an optional persisted recurrence definition for due reminders. The domain shape may vary, but it must preserve these semantics:
+
+- No repeat is the default.
+- A repeat rule cannot be enabled without a due date and time.
+- Completing an occurrence preserves that occurrence in history and advances or creates the next occurrence exactly once.
+- Recurrence survives edit, archive/restore, app termination, and relaunch without duplicating pending notifications.
+- Stopping recurrence does not delete completed occurrence history.
+- Calendar calculations use Calendar and timezone-aware date components rather than fixed second offsets.
+
+The supported MVP cadences, end conditions, and edit/delete scope wording must be confirmed before recurrence implementation begins. The UI must never silently assume whether an edit applies to one occurrence or the remaining series.
+
+Add reminder-scoped attachment metadata and app-owned local payload storage for three MVP types:
+
+1. Photo selected explicitly through the system photo picker.
+2. File selected explicitly through the system document picker.
+3. Contact card selected explicitly through the system contact picker and stored as a local vCard snapshot.
+
+Attachments are optional and independent of Priority, Important, tags, completion, and archive state. Removing an attachment or deleting its owning reminder removes the app-owned payload. The MVP does not request broad Contacts access, keep a live contact relationship, run OCR, index attachment contents, or upload attachments.
+
 ## 7. MVP information architecture
 
 ```text
@@ -171,11 +201,14 @@ Reminder Home
 ├── Completed section
 ├── Archived section
 ├── New Reminder sheet
+│   ├── Repeat controls
+│   └── Attachment picker
 └── Reminder Detail
     ├── Edit Reminder sheet
     ├── Complete/Reopen
     ├── Flag/Unflag
     ├── Archive/Restore
+    ├── Attachment preview
     └── Delete confirmation
 ```
 
@@ -191,7 +224,8 @@ Purpose: scan, filter, search, and act on reminders without unnecessary navigati
 |---|---|---|
 | Large “TimeLore” title | Establishes the root | Becomes compact using native navigation behavior while scrolling |
 | Plus control | Creates a reminder | Opens the New Reminder sheet |
-| Search | Finds title or why text locally | Case-insensitive; clearing restores normal sections |
+| Sort control | Chooses Open-reminder ordering | Due date (default) or Priority; visually secondary to Plus |
+| Search | Finds title or Notes text locally | Case-insensitive; clearing restores normal sections |
 | All chip | Removes tag/priority filter | Shows every reminder inside its status section |
 | Important chip | Priority filter | Shows only `isImportant == true` reminders inside each status section |
 | Untagged chip | Missing-tag filter | Shows reminders with no tags |
@@ -214,11 +248,13 @@ Display in this order:
 
 1. Completion affordance/status indicator.
 2. Optional Important flag.
-3. Title, maximum two lines at standard sizes.
-4. Optional why preview, maximum two lines.
-5. Optional due date with calendar symbol and semantic overdue treatment.
-6. Up to the available number of tag chips; overflow can use “+N.”
-7. Navigation chevron only when needed by the chosen row style.
+3. Optional Priority marker (`!`, `!!`, or `!!!`).
+4. Title, maximum two lines at standard sizes.
+5. Optional Notes preview, maximum two lines.
+6. Optional due date with calendar symbol and semantic overdue treatment.
+7. Up to the available number of tag chips; overflow can use “+N.”
+8. Optional recurrence symbol and attachment count; both include text in accessibility output.
+9. Navigation chevron only when needed by the chosen row style.
 
 Do not:
 
@@ -255,12 +291,15 @@ Fields:
 | Field/control | Requirement |
 |---|---|
 | What do you need to do? | Required, trimmed, 1–200 characters |
-| Why does this matter? | Optional, up to 2,000 characters; visually prominent |
+| Notes | Optional, up to 2,000 characters; visually prominent |
 | Set a due date | Off by default |
 | Date/time | Visible only when due date is enabled |
-| Important | Optional explicit toggle or toolbar action |
+| Repeat | Off by default; visible/enabled only when a due date is set |
+| Flag as Important | Optional explicit persisted flag, independent of Priority |
+| Priority | None, `!`, `!!`, or `!!!`; visually grouped with Flag but independently set |
 | Tags | Multi-select default and user tags |
 | New tag | Validates, normalizes, selects the created tag |
+| Attachments | Add Photo, Add File, or Add Contact Card; show removable local previews before save |
 | Save | Validates then persists locally |
 
 Permission behavior:
@@ -275,10 +314,13 @@ Permission behavior:
 | Element | Function |
 |---|---|
 | Title | Primary identity |
-| WHY section | Preserves the reason; show “No context added” when empty |
+| Reminder card | Full title in a non-glass semantic-fill card; no redundant status circle |
+| NOTES section | Preserves editable context; show “No notes added” when empty |
 | Due row | Shows formatted due date/time |
-| Important row | Shows and toggles explicit Important state |
+| Repeat row | Shows the recurrence summary and next occurrence when recurrence is enabled |
+| Priority & Flag | Separate controls, grouped closely; Priority uses none, `!`, `!!`, or `!!!` |
 | Tags | Shows stable colored chips |
+| Attachments | Shows type, accessible name, thumbnail/icon, preview/open action, and explicit removal action |
 | History | Created, updated, completed, and archived timestamps when present |
 | Overflow menu | Edit, Mark Important/Unflag, Archive/Restore, Delete |
 | Complete/Reopen action | Changes only status and completion timestamp |
@@ -296,7 +338,8 @@ Delete always presents:
 - Existing values are prefilled.
 - Cancel discards unsaved edits.
 - Saving updates `updatedAt`.
-- Editing does not silently reset Important, status, completion, archive, or tag relationships.
+- Editing does not silently reset Priority, Important, status, completion, archive, recurrence, attachments, or tag relationships.
+- Editing a recurring reminder must explicitly state whether a change applies to one occurrence or the remaining series whenever that distinction exists.
 
 ### 8.7 Empty and error states
 
@@ -306,15 +349,19 @@ Delete always presents:
 | Filtered empty | “No reminders found” plus Clear filters |
 | Blank title | Inline “Enter a reminder title.” |
 | Notification denied | “Notifications are off” plus Open Settings |
-| No why | “No context added” |
+| No Notes | “No notes added” |
 | Tag validation | Inline, adjacent to tag creation |
+| Repeat without due date | Inline explanation that a due date is required |
+| Attachment import failed | Retains the reminder draft and offers Retry or Remove |
+| Attachment unavailable/corrupt | Identifies the unavailable item without blocking access to the reminder |
+| Contact access unavailable | Explains that the user can cancel or retry; saving the reminder remains available |
 
 ## 9. MVP interaction timelines
 
 ### 9.1 Create
 
 ```text
-Home → Plus → New Reminder → Add title/why → Optional date/tags/Important
+Home → Plus → New Reminder → Add title/Notes → Optional date/repeat/tags/Important/attachments
 → Save → Optional notification request → Home with new card
 ```
 
@@ -351,16 +398,35 @@ Card → Detail → Overflow
 └── Delete → Confirmation → Delete → Home
 ```
 
+### 9.6 Complete a recurring occurrence
+
+```text
+Recurring open reminder → Complete → Completed occurrence remains in history
+→ Next occurrence is created or advanced exactly once → One pending local notification is reconciled
+```
+
+Stopping recurrence preserves already completed occurrences and cancels future notification work for that series.
+
+### 9.7 Attach and remove context
+
+```text
+New/Edit Reminder → Attach → Choose Photo, File, or Contact Card
+→ Review local preview → Save → Detail shows attachment
+→ Remove → Confirm when data loss is possible → Local payload is cleaned up
+```
+
 ## 10. MVP accessibility and resilience
 
-- VoiceOver card label combines title, why summary, due state, Important state, and tags in a predictable order.
+- VoiceOver card label combines title, Notes summary, due and repeat state, Priority, Important state, tags, and attachment count in a predictable order.
 - Swipe actions have explicit labels and hints.
 - Chip accessibility values announce Selected or Not selected.
 - Important always has the word and flag symbol; never amber alone.
 - Support Dynamic Type through accessibility sizes without clipping Save, Complete, Flag, Archive, Restore, or Delete.
 - Respect Increased Contrast, Reduced Transparency, and Reduced Motion.
 - Use semantic system colors and verify contrast in pure-white and OLED-black modes.
-- Persist section expansion, Important, tags, filters where intended, and reminder state.
+- Persist section expansion, Priority, Important, tags, recurrence, attachment metadata, sort/filter choices where intended, and reminder state.
+- Attachment controls announce type, display name, import state, and available actions; thumbnails are never the only label.
+- System Photos, Files, and Contacts pickers remain user-initiated and provide clear cancel behavior.
 - Test locale, 12/24-hour time, long tag names, long titles, and VoiceOver rotor navigation.
 
 ## 11. MVP implementation order
@@ -373,8 +439,13 @@ Card → Detail → Overflow
 6. Update detail and overflow actions.
 7. Adopt system iOS 26 navigation/presentation materials.
 8. Validate light/dark, accessibility, persistence, and UI tests.
+9. Add recurring reminder domain rules, editor/detail UI, occurrence history, and notification reconciliation.
+10. Add local photo, file, and contact-card attachment import, preview, removal, cleanup, and failure handling.
+11. Run the integrated MVP acceptance audit and founder-device trial.
 
 ## 12. MVP acceptance criteria
+
+This checklist remains open until each item has been exercised against the current build. Existing reminder behavior is under acceptance review; recurrence and attachment criteria are approved but not yet implemented.
 
 - [ ] Swipe right completes an open reminder.
 - [ ] Swipe right reopens a completed reminder.
@@ -382,6 +453,8 @@ Card → Detail → Overflow
 - [ ] Swipe left shows Flag/Unflag and Restore on archived reminders.
 - [ ] Important persists across every status and lifecycle transition.
 - [ ] Important filtering works across Open, Completed, and Archived.
+- [ ] Priority persists independently of Important, lifecycle transitions, and relaunch.
+- [ ] Sort menu defaults to Due date and supports explicit Priority ordering.
 - [ ] All, Important, and tag chips are visually and semantically distinct.
 - [ ] Default tags are seeded once without duplicates.
 - [ ] Color is never the only indicator.
@@ -389,6 +462,14 @@ Card → Detail → Overflow
 - [ ] No bottom tab bar appears in the MVP.
 - [ ] Pure-white and OLED-black content layers both pass accessibility checks.
 - [ ] Delete remains confirmed and is not a full swipe.
+- [ ] Repeat is off by default and cannot be enabled without a due date.
+- [ ] Completing a recurring occurrence preserves history and produces exactly one next occurrence.
+- [ ] Recurrence edits, stopping, archiving, deletion, relaunch, timezone changes, and notification reconciliation do not duplicate or lose occurrences.
+- [ ] A user can add, preview, persist, and remove a photo, file, or contact-card attachment.
+- [ ] Attachments remain available offline after relaunch and preserve their type and accessible display name.
+- [ ] Removing an attachment or deleting its reminder cleans up app-owned payload data without affecting other reminders.
+- [ ] Attachment import denial, cancellation, missing data, and corrupt data never discard the reminder draft or block reminder access.
+- [ ] No OCR, attachment-content indexing, upload, broad Contacts access, or live contact syncing is introduced.
 
 ---
 
@@ -396,7 +477,7 @@ Card → Detail → Overflow
 
 ## 13. Expansion gate
 
-Do not implement the pages below until a two-week trial demonstrates that users repeatedly add context and find it useful. When the gate passes, select one coherent experiment rather than implementing the entire concept.
+Do not implement the pages below until the expanded MVP—including recurring reminders and basic reminder attachments—passes acceptance review and a two-week trial demonstrates that users repeatedly add and retrieve context. When the gate passes, select one coherent experiment rather than implementing the entire concept.
 
 ## 14. Mature information architecture
 
@@ -616,7 +697,7 @@ When implementing a task:
 
 1. State whether it is MVP or post-MVP.
 2. Identify the page and acceptance criteria in this document.
-3. Refuse accidental scope expansion from concept boards.
+3. Treat recurrence and reminder-scoped photo/file/contact-card attachments as MVP; refuse other accidental scope expansion from concept boards.
 4. Use Apple-native components before introducing custom UI.
 5. Add accessibility identifiers and tests for every changed interaction.
 

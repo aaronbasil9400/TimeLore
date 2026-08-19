@@ -4,6 +4,8 @@ struct ReminderDraft: Equatable, Sendable {
     var title: String = ""
     var reason: String = ""
     var dueAt: Date?
+    var isImportant = false
+    var priority = ReminderPriority.none
 
     var normalizedTitle: String {
         title.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -15,7 +17,7 @@ struct ReminderDraft: Equatable, Sendable {
 
     func validationError(now: Date = .now, allowingPastDueAt originalDueAt: Date? = nil) -> String? {
         if normalizedTitle.isEmpty {
-            return "Add a reminder title."
+            return "Enter a reminder title."
         }
 
         if normalizedTitle.count > 200 {

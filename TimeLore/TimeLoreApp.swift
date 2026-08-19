@@ -12,6 +12,7 @@ enum AppIdentity {
 @main
 struct TimeLoreApp: App {
     private let modelContainer: ModelContainer
+    @StateObject private var notificationService = ReminderNotificationService()
 
     init() {
         let arguments = ProcessInfo.processInfo.arguments
@@ -31,6 +32,8 @@ struct TimeLoreApp: App {
                 ReminderTag.self,
                 configurations: configuration
             )
+            try DefaultReminderTagSeeder.seed(in: modelContainer.mainContext)
+            try modelContainer.mainContext.save()
         } catch {
             fatalError("Unable to create the local reminder store: \(error.localizedDescription)")
         }
@@ -39,6 +42,7 @@ struct TimeLoreApp: App {
     var body: some Scene {
         WindowGroup {
             ReminderListView()
+                .environmentObject(notificationService)
         }
         .modelContainer(modelContainer)
     }

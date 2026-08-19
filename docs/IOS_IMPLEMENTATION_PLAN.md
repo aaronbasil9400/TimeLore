@@ -2,7 +2,9 @@
 
 ## Outcome
 
-Produce a basic, reliable reminders app in Xcode before investing in TimeLore’s OCR, location, cloud, or AI vision. Each milestone is a vertical slice that can be demonstrated on a simulator or device.
+Produce a reliable, local-first reminders app in Xcode before investing in TimeLore’s OCR, location, cloud, or AI vision. The MVP includes the core reminder loop, recurring reminders, and basic reminder-scoped photo, file, and contact-card attachments. Each milestone is a vertical slice that can be demonstrated on a simulator or device.
+
+**Overall MVP status: In progress.** Milestones 0–2 are complete. Notification reliability and final polish are under acceptance review. Recurrence is the next implementation slice, followed by local attachments and the integrated MVP trial.
 
 ## Project Bootstrap
 
@@ -32,7 +34,7 @@ Acceptance criteria:
 - Unit and UI test targets run.
 - A temporary in-memory model container is available to previews and tests.
 
-**Status:** Project, shared scheme, SwiftData container, and in-memory previews are implemented. App and tests build, and the suite runs on the installed iPhone 17 simulator.
+**Status: Complete.** Project, shared scheme, SwiftData container, and in-memory previews are implemented. App and tests build, and the suite runs on the installed iPhone 17 simulator.
 
 ## Milestone 1 — Capture and Persist
 
@@ -40,13 +42,13 @@ Implement the reminder model, open-reminders list, and create form.
 
 Acceptance criteria:
 
-- A user can save a title, optional “why,” and optional future due date.
+- A user can save a title, optional Notes, and optional future due date.
 - Blank or whitespace-only titles cannot be saved.
 - A saved reminder survives app termination and relaunch.
 - The list has a useful empty state and deterministic ordering.
 - Unit tests cover validation and ordering.
 
-**Status:** Initial implementation created. App, unit-test, and UI-test targets compile for the generic iOS Simulator SDK. Simulator execution and persistence verification remain pending an available runtime.
+**Status: Complete.** Capture, validation, deterministic ordering, persistence, and simulator coverage are implemented and verified.
 
 ## Milestone 2 — Inspect and Maintain
 
@@ -60,10 +62,11 @@ Acceptance criteria:
 - Open, Completed, and Archived sections collapse independently and remember the user’s choices.
 - Archiving preserves completion status; restoring returns a reminder to the correct section.
 - Reminders support multiple normalized tags and tag filtering.
+- Priority and Important remain independent across lifecycle transitions.
 - Delete requires confirmation.
 - Unit and UI tests cover status transitions and maintenance flows.
 
-**Status:** Implemented and verified. Fifteen domain/persistence tests and four UI tests pass on an iPhone 17 simulator, covering edit, complete/reopen, archive/restore, confirmed deletion, tags, and persisted section collapse state.
+**Status: Complete.** Maintenance, Priority, Important, tag, sorting, and directional-swipe behavior are implemented and covered by domain and UI tests on an iPhone 17 simulator.
 
 ## Milestone 3 — Notify Reliably
 
@@ -77,28 +80,82 @@ Acceptance criteria:
 - Denied permission does not block saving and produces clear UI guidance.
 - Unit tests use a fake notification client and verify scheduling decisions.
 
+**Status: In progress.** The notification protocol, policy, reconciliation service, and focused tests are implemented. Manual device delivery, denied-permission guidance, and final lifecycle acceptance checks remain.
+
 ## Milestone 4 — Find and Polish
 
 Add local search and complete accessibility and resilience passes.
 
 Acceptance criteria:
 
-- Search is case-insensitive across title and “why.”
+- Search is case-insensitive across title and Notes.
 - Empty search restores the normal list.
 - Dynamic Type does not clip essential controls at accessibility sizes.
 - VoiceOver labels distinguish reminder title, due state, and completion actions.
 - UI tests cover create → relaunch → edit → complete and notification-denied behavior where practical.
 
-## Milestone 5 — Small User Trial
+**Status: In progress.** Local search, core accessibility labels, pure-white/OLED-black content layers, and primary UI paths are implemented. Dynamic Type, VoiceOver, locale, Reduced Transparency, and founder-device review remain part of the final acceptance audit.
+
+## Milestone 5 — Recurring Reminders
+
+Add explicit repeat rules, recurring occurrence history, and deterministic notification reconciliation.
+
+Acceptance criteria:
+
+- Repeat is off by default and requires a due date and time.
+- The editor and detail views show a human-readable repeat summary.
+- Completing one occurrence retains its completed history and advances or creates exactly one next occurrence.
+- Editing or stopping recurrence never deletes completed occurrence history.
+- Editing or deleting a recurring reminder explicitly communicates whether the change affects one occurrence or the remaining series whenever that distinction exists.
+- Archive, restore, completion, reopening, deletion, app relaunch, timezone changes, and notification reconciliation do not create duplicate occurrences or pending requests.
+- Recurrence date calculations use calendar/timezone semantics and have focused tests for daylight-saving and end-of-month boundaries.
+
+**Status: Next — approved MVP scope; implementation not started.**
+
+Product decisions to close before coding:
+
+- Which cadence presets and custom intervals ship in the MVP.
+- Whether recurrence can end by date, occurrence count, both, or neither.
+- Exact “this occurrence” versus “this and future occurrences” behavior for edit and delete.
+
+## Milestone 6 — Reminder Attachments
+
+Add local, reminder-scoped photo, file, and contact-card attachments without introducing OCR, sync, or a people graph.
+
+Acceptance criteria:
+
+- New and Edit Reminder offer explicit Add Photo, Add File, and Add Contact Card actions using Apple system pickers.
+- Selected payloads are copied into app-owned local storage before temporary picker access expires.
+- Contact cards are stored as user-selected local vCard snapshots; the app does not request broad Contacts access or maintain live contact syncing.
+- Draft and saved attachments show type, accessible display name, thumbnail or icon, import state, and remove action.
+- Saved attachments persist across app termination/relaunch and open through an appropriate local preview.
+- Picker cancellation or permission denial leaves the draft intact and saving available.
+- Missing, unsupported, oversized, or corrupt payloads show a recoverable error without blocking the reminder.
+- Removing an attachment or deleting its reminder cleans up only the associated app-owned payload.
+- Attachment lifecycle and cleanup have focused persistence/service tests; add/preview/remove have UI coverage.
+
+**Status: Approved MVP scope; queued after the recurrence slice.**
+
+Product decisions to close before coding:
+
+- Attachment count, individual-size, and total-per-reminder limits.
+- Supported photo and file formats and whether files may be exported through the share sheet.
+- Whether attachments belong to a recurring series, a single occurrence, or can be chosen explicitly for either.
+
+## Milestone 7 — Integrated Acceptance and Small User Trial
 
 Install on founder devices, then distribute a narrow beta only after the previous milestones pass.
 
 Tasks:
 
 - Test daylight-saving changes, locale changes, app termination, and notification permission changes.
+- Test recurrence generation, edits, stopping, archive/restore, and notification delivery across timezone and daylight-saving boundaries.
+- Test attachment import, relaunch persistence, offline preview, removal, cleanup, storage pressure, and picker cancellation.
 - Run a two-week trial with 5–10 target users.
-- Ask when “why” was useful, when capture felt slow, and what they expected but could not do.
+- Ask when Notes or attachments were useful, when capture felt slow, and whether recurring reminders behaved predictably.
 - Record evidence and choose exactly one next experiment.
+
+**Status: Pending Milestones 3–6.**
 
 ## Suggested Domain Shape
 
@@ -114,28 +171,33 @@ struct ReminderDraft {
     var title: String
     var reason: String
     var dueAt: Date?
+    var repeatRule: RepeatRule?
+    var attachments: [ReminderAttachmentDraft]
 }
 
 // Persisted Reminder fields:
-// id, title, reason, dueAt, status, tags,
+// id, title, reason, dueAt, repeatRule, recurrence identity,
+// priority, isImportant, status, tags, attachment metadata,
 // createdAt, updatedAt, completedAt, archivedAt
 ```
 
-Use the reminder UUID string as the notification request identifier so updates and cancellation are idempotent.
+One-time reminders may continue to use the reminder UUID string as the local-notification request identifier. Recurring occurrences need a deterministic series/occurrence identifier so reconciliation can update or cancel exactly one pending request without colliding with completed history.
+
+Store attachment metadata in SwiftData and payloads in an app-owned Application Support directory. Persist stable relative identifiers, not temporary picker URLs or device-specific absolute paths.
 
 ## Test Strategy
 
-- **Unit tests:** validation, sort order, status transitions, and notification policy.
-- **Persistence tests:** CRUD against an in-memory SwiftData container.
-- **UI tests:** one critical happy path plus key empty and permission states.
-- **Manual device tests:** notification delivery, permission settings, background/terminated behavior, and accessibility.
+- **Unit tests:** validation, sort order, status transitions, recurrence calculations, occurrence generation, and notification policy.
+- **Persistence tests:** CRUD against an in-memory SwiftData container plus attachment metadata/payload lifecycle and cleanup.
+- **UI tests:** critical reminder, recurrence, and attachment paths plus key empty, cancellation, and permission states.
+- **Manual device tests:** notification delivery, permission settings, background/terminated behavior, Photos/Files/Contacts pickers, local previews, and accessibility.
 
 ## Decision Gates
 
-After the trial, select one path:
+After the expanded MVP trial, select one path:
 
 1. Improve the core capture loop if speed or clarity is weak.
-2. Add the most-requested context type if “why” proves valuable.
+2. Add the most-requested post-MVP context or intelligence capability if Notes and attachments prove valuable.
 3. Stop or reposition if users do not value context enough to change behavior.
 
-Cloud sync and AI are architectural commitments, not default next steps.
+Cloud sync, OCR, relationship graphs, and AI are architectural commitments, not default next steps.

@@ -4,6 +4,8 @@ import SwiftUI
 struct ReminderEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.openURL) private var openURL
+    @EnvironmentObject private var notificationService: ReminderNotificationService
     @Query(sort: \ReminderTag.name) private var availableTags: [ReminderTag]
 
     private let reminder: Reminder?
@@ -13,11 +15,15 @@ struct ReminderEditorView: View {
     @State private var reason: String
     @State private var includesDueDate: Bool
     @State private var dueAt: Date
+    @State private var isImportant: Bool
+    @State private var priority: ReminderPriority
     @State private var selectedTagNames: Set<String>
     @State private var pendingTagNames: [String: String] = [:]
     @State private var newTagName = ""
     @State private var validationMessage: String?
     @State private var tagValidationMessage: String?
+    @State private var isShowingNotificationGuidance = false
+    @AppStorage("notifications.permissionPrompted") private var hasPromptedForNotifications = false
 
     init(reminder: Reminder? = nil) {
         self.reminder = reminder
@@ -26,11 +32,13 @@ struct ReminderEditorView: View {
         _reason = State(initialValue: reminder?.reason ?? "")
         _includesDueDate = State(initialValue: reminder?.dueAt != nil)
         _dueAt = State(initialValue: reminder?.dueAt ?? Date.now.addingTimeInterval(60 * 60))
+        _isImportant = State(initialValue: reminder?.isImportant ?? false)
+        _priority = State(initialValue: reminder?.priority ?? .none)
         _selectedTagNames = State(initialValue: Set(reminder?.tags.map(\.normalizedName) ?? []))
     }
 
     private var draft: ReminderDraft {
-        ReminderDraft(title: title, reason: reason, dueAt: includesDueDate ? dueAt : nil)
+        ReminderDraft(title: title, reason: reason, dueAt: includesDueDate ? dueAt : nil, isImportant: isImportant, priority: priority)
     }
 
     private var tagOptions: [TagOption] {
@@ -58,10 +66,10 @@ struct ReminderEditorView: View {
                     .accessibilityLabel("Reminder title")
                     .accessibilityIdentifier("reminder.title")
 
-                TextField("Why does this matter?", text: $reason, axis: .vertical)
+                TextField("Notes", text: $reason, axis: .vertical)
                     .textInputAutocapitalization(.sentences)
                     .lineLimit(3...8)
-                    .accessibilityLabel("Reminder context")
+                    .accessibilityLabel("Reminder notes")
                     .accessibilityIdentifier("reminder.reason")
             }
 
@@ -75,6 +83,20 @@ struct ReminderEditorView: View {
                         displayedComponents: [.date, .hourAndMinute]
                     )
                 }
+            }
+
+            Section("Priority & Flag") {
+                Toggle("Flag as Important", isOn: $isImportant)
+                    .accessibilityIdentifier("reminder.important")
+
+                Picker("Priority", selection: $priority) {
+                    ForEach(ReminderPriority.allCases, id: \.self) { option in
+                        Text(option == .none ? "None" : option.marker).tag(option)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .accessibilityLabel("Priority")
+                .accessibilityValue(priority.accessibilityName)
             }
 
             Section("Tags") {
@@ -138,6 +160,15 @@ struct ReminderEditorView: View {
                     .accessibilityIdentifier("reminder.save")
             }
         }
+        .alert("Notifications are off", isPresented: $isShowingNotificationGuidance) {
+            Button("Open Settings") {
+                openURL(URL(string: UIApplication.openSettingsURLString)!)
+                dismiss()
+            }
+            Button("Continue") { dismiss() }
+        } message: {
+            Text("This reminder was saved, but it will not notify you until notifications are enabled in Settings.")
+        }
     }
 
     private func toggleTag(_ normalizedName: String) {
@@ -183,15 +214,33 @@ struct ReminderEditorView: View {
             return tag
         }
 
+        let savedReminder: Reminder
         if let reminder {
             reminder.update(from: draft, tags: resolvedTags)
+            savedReminder = reminder
         } else {
             let newReminder = Reminder(draft: draft)
             newReminder.tags = resolvedTags
             modelContext.insert(newReminder)
+            savedReminder = newReminder
         }
 
-        dismiss()
+        let shouldPromptForPermission = ReminderNotificationPolicy.shouldSchedule(savedReminder) && !hasPromptedForNotifications
+        if shouldPromptForPermission {
+            hasPromptedForNotifications = true
+        }
+
+        Task {
+            let shouldShowGuidance = await notificationService.reconcile(
+                savedReminder,
+                requestAuthorizationIfNeeded: shouldPromptForPermission
+            )
+            if shouldShowGuidance {
+                isShowingNotificationGuidance = true
+            } else {
+                dismiss()
+            }
+        }
     }
 }
 

@@ -21,6 +21,12 @@
 		A10000000000000000000013 /* ReminderTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* ReminderTagTests.swift */; };
 		A10000000000000000000014 /* ReminderPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* ReminderPersistenceTests.swift */; };
 		A10000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* Assets.xcassets */; };
+		A10000000000000000000016 /* DefaultReminderTagSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* DefaultReminderTagSeeder.swift */; };
+		A10000000000000000000017 /* ReminderNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* ReminderNotificationService.swift */; };
+		A10000000000000000000018 /* ReminderTagPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* ReminderTagPresentation.swift */; };
+		A10000000000000000000019 /* ReminderImportantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* ReminderImportantTests.swift */; };
+		A10000000000000000000020 /* DefaultReminderTagSeederTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* DefaultReminderTagSeederTests.swift */; };
+		A10000000000000000000021 /* ReminderNotificationPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* ReminderNotificationPolicyTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +48,12 @@
 		A20000000000000000000016 /* ReminderTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTagTests.swift; sourceTree = "<group>"; };
 		A20000000000000000000017 /* ReminderPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderPersistenceTests.swift; sourceTree = "<group>"; };
 		A20000000000000000000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A20000000000000000000019 /* DefaultReminderTagSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultReminderTagSeeder.swift; sourceTree = "<group>"; };
+		A20000000000000000000020 /* ReminderNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationService.swift; sourceTree = "<group>"; };
+		A20000000000000000000021 /* ReminderTagPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTagPresentation.swift; sourceTree = "<group>"; };
+		A20000000000000000000022 /* ReminderImportantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderImportantTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000023 /* DefaultReminderTagSeederTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultReminderTagSeederTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000024 /* ReminderNotificationPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationPolicyTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,14 +64,15 @@
 
 /* Begin PBXGroup section */
 		A40000000000000000000001 = {isa = PBXGroup; children = (A40000000000000000000002 /* TimeLore */, A40000000000000000000006 /* TimeLoreTests */, A40000000000000000000007 /* TimeLoreUITests */, A40000000000000000000008 /* Products */); sourceTree = "<group>"; };
-		A40000000000000000000002 /* TimeLore */ = {isa = PBXGroup; children = (A20000000000000000000001 /* TimeLoreApp.swift */, A40000000000000000000003 /* Models */, A40000000000000000000004 /* Features */, A40000000000000000000009 /* Resources */); path = TimeLore; sourceTree = "<group>"; };
+		A40000000000000000000002 /* TimeLore */ = {isa = PBXGroup; children = (A20000000000000000000001 /* TimeLoreApp.swift */, A40000000000000000000003 /* Models */, A40000000000000000000004 /* Features */, A40000000000000000000009 /* Resources */, A40000000000000000000010 /* Services */); path = TimeLore; sourceTree = "<group>"; };
 		A40000000000000000000003 /* Models */ = {isa = PBXGroup; children = (A20000000000000000000002 /* Reminder.swift */, A20000000000000000000003 /* ReminderDraft.swift */, A20000000000000000000012 /* ReminderTag.swift */); path = Models; sourceTree = "<group>"; };
 		A40000000000000000000004 /* Features */ = {isa = PBXGroup; children = (A40000000000000000000005 /* Reminders */); path = Features; sourceTree = "<group>"; };
-		A40000000000000000000005 /* Reminders */ = {isa = PBXGroup; children = (A20000000000000000000004 /* ReminderListView.swift */, A20000000000000000000005 /* ReminderEditorView.swift */, A20000000000000000000013 /* ReminderDetailView.swift */, A20000000000000000000014 /* ReminderTagChip.swift */); path = Reminders; sourceTree = "<group>"; };
-		A40000000000000000000006 /* TimeLoreTests */ = {isa = PBXGroup; children = (A20000000000000000000006 /* ReminderDraftTests.swift */, A20000000000000000000007 /* ReminderSortingTests.swift */, A20000000000000000000015 /* ReminderLifecycleTests.swift */, A20000000000000000000016 /* ReminderTagTests.swift */, A20000000000000000000017 /* ReminderPersistenceTests.swift */); path = TimeLoreTests; sourceTree = "<group>"; };
+		A40000000000000000000005 /* Reminders */ = {isa = PBXGroup; children = (A20000000000000000000004 /* ReminderListView.swift */, A20000000000000000000005 /* ReminderEditorView.swift */, A20000000000000000000013 /* ReminderDetailView.swift */, A20000000000000000000014 /* ReminderTagChip.swift */, A20000000000000000000021 /* ReminderTagPresentation.swift */); path = Reminders; sourceTree = "<group>"; };
+		A40000000000000000000006 /* TimeLoreTests */ = {isa = PBXGroup; children = (A20000000000000000000006 /* ReminderDraftTests.swift */, A20000000000000000000007 /* ReminderSortingTests.swift */, A20000000000000000000015 /* ReminderLifecycleTests.swift */, A20000000000000000000016 /* ReminderTagTests.swift */, A20000000000000000000017 /* ReminderPersistenceTests.swift */, A20000000000000000000022 /* ReminderImportantTests.swift */, A20000000000000000000023 /* DefaultReminderTagSeederTests.swift */, A20000000000000000000024 /* ReminderNotificationPolicyTests.swift */); path = TimeLoreTests; sourceTree = "<group>"; };
 		A40000000000000000000007 /* TimeLoreUITests */ = {isa = PBXGroup; children = (A20000000000000000000008 /* TimeLoreUITests.swift */); path = TimeLoreUITests; sourceTree = "<group>"; };
 		A40000000000000000000008 /* Products */ = {isa = PBXGroup; children = (A20000000000000000000009 /* TimeLore.app */, A20000000000000000000010 /* TimeLoreTests.xctest */, A20000000000000000000011 /* TimeLoreUITests.xctest */); name = Products; sourceTree = "<group>"; };
 		A40000000000000000000009 /* Resources */ = {isa = PBXGroup; children = (A20000000000000000000018 /* Assets.xcassets */); path = Resources; sourceTree = "<group>"; };
+		A40000000000000000000010 /* Services */ = {isa = PBXGroup; children = (A20000000000000000000019 /* DefaultReminderTagSeeder.swift */, A20000000000000000000020 /* ReminderNotificationService.swift */); path = Services; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -77,8 +90,8 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A70000000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* TimeLoreApp.swift in Sources */, A10000000000000000000002 /* Reminder.swift in Sources */, A10000000000000000000003 /* ReminderDraft.swift in Sources */, A10000000000000000000009 /* ReminderTag.swift in Sources */, A10000000000000000000004 /* ReminderListView.swift in Sources */, A10000000000000000000005 /* ReminderEditorView.swift in Sources */, A10000000000000000000010 /* ReminderDetailView.swift in Sources */, A10000000000000000000011 /* ReminderTagChip.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
-		A70000000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000006 /* ReminderDraftTests.swift in Sources */, A10000000000000000000007 /* ReminderSortingTests.swift in Sources */, A10000000000000000000012 /* ReminderLifecycleTests.swift in Sources */, A10000000000000000000013 /* ReminderTagTests.swift in Sources */, A10000000000000000000014 /* ReminderPersistenceTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A70000000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* TimeLoreApp.swift in Sources */, A10000000000000000000002 /* Reminder.swift in Sources */, A10000000000000000000003 /* ReminderDraft.swift in Sources */, A10000000000000000000009 /* ReminderTag.swift in Sources */, A10000000000000000000004 /* ReminderListView.swift in Sources */, A10000000000000000000005 /* ReminderEditorView.swift in Sources */, A10000000000000000000010 /* ReminderDetailView.swift in Sources */, A10000000000000000000011 /* ReminderTagChip.swift in Sources */, A10000000000000000000016 /* DefaultReminderTagSeeder.swift in Sources */, A10000000000000000000017 /* ReminderNotificationService.swift in Sources */, A10000000000000000000018 /* ReminderTagPresentation.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A70000000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000006 /* ReminderDraftTests.swift in Sources */, A10000000000000000000007 /* ReminderSortingTests.swift in Sources */, A10000000000000000000012 /* ReminderLifecycleTests.swift in Sources */, A10000000000000000000013 /* ReminderTagTests.swift in Sources */, A10000000000000000000014 /* ReminderPersistenceTests.swift in Sources */, A10000000000000000000019 /* ReminderImportantTests.swift in Sources */, A10000000000000000000020 /* DefaultReminderTagSeederTests.swift in Sources */, A10000000000000000000021 /* ReminderNotificationPolicyTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 		A70000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000008 /* TimeLoreUITests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
