@@ -1,5 +1,5 @@
 import Testing
-@testable import Breadcrumb
+@testable import TimeLore
 
 struct ReminderTagTests {
     @Test func trimsAndNormalizesNames() {

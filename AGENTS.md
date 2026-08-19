@@ -93,7 +93,7 @@ Boards communicate hierarchy and flow, not fixed pixel coordinates. Standard con
 ## Proposed Source Layout
 
 ```text
-Breadcrumb/
+TimeLore/
 ├── App/
 ├── Features/
 │   └── Reminders/
@@ -136,7 +136,7 @@ Once an Xcode project exists, prefer commands equivalent to:
 
 ```bash
 xcodebuild -scheme TimeLore -destination 'platform=iOS Simulator,name=iPhone 16' build
-xcodebuild -scheme Breadcrumb -destination 'platform=iOS Simulator,name=iPhone 16' test
+xcodebuild -scheme TimeLore -destination 'platform=iOS Simulator,name=iPhone 16' test
 ```
 
 Discover available simulators first and substitute an installed device. Do not claim a build or test passed unless the command was run successfully. If full Xcode is unavailable, state that limitation and still run any checks that are available.

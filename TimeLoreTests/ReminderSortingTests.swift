@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import Breadcrumb
+@testable import TimeLore
 
 struct ReminderSortingTests {
     @Test func putsDatedRemindersBeforeUndatedReminders() {

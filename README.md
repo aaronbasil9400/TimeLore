@@ -9,7 +9,7 @@ The repository contains the TimeLore Xcode project, product documentation, and i
 - [MVP product brief](docs/MVP_PRODUCT_BRIEF.md) — the first-product boundary.
 - [iOS implementation plan](docs/IOS_IMPLEMENTATION_PLAN.md) — ordered vertical slices and acceptance criteria.
 - [Agent guidance](AGENTS.md) — engineering rules for people and coding agents.
-- [Original app concept](TimeLore%20App%20Concept.md) — long-term vision, not current scope.
+- [Original app concept](Documentation/Breadcrumb%20App%20Concept.md) — long-term vision, not current scope.
 
 ## First Release
 

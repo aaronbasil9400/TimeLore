@@ -1,6 +1,6 @@
 import SwiftData
 import Testing
-@testable import Breadcrumb
+@testable import TimeLore
 
 @MainActor
 struct ReminderPersistenceTests {

@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import Breadcrumb
+@testable import TimeLore
 
 struct ReminderDraftTests {
     private let referenceDate = Date(timeIntervalSinceReferenceDate: 1_000_000)
