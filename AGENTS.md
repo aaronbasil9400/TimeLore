@@ -1,8 +1,8 @@
-# Breadcrumb Repository Guide
+# TimeLore Repository Guide
 
 ## Mission
 
-Build Breadcrumb/TimeLore as an iOS reminder app that preserves the reason behind a reminder. Prove the capture → notify → complete loop before adding the broader memory-assistant vision.
+Build TimeLore as an iOS reminder app that preserves the context behind a reminder. Prove the capture → notify → complete loop, including recurring commitments and locally attached context, before adding the broader memory-assistant vision.
 
 The beginning phase stays deliberately small, but its interaction model now also includes:
 
@@ -10,6 +10,7 @@ The beginning phase stays deliberately small, but its interaction model now also
 - Predictable directional swipe actions.
 - Distinguishable default tags and filters.
 - Apple-native iOS 26 navigation and presentation surfaces.
+- Recurring reminders and reminder-scoped photo, file, and contact-card attachments as the next approved MVP slices.
 
 ## Read First
 
@@ -24,22 +25,30 @@ The MVP brief controls the beginning-phase product boundary. `docs/UI_SPEC.md` c
 
 The existing founder documents are vision inputs, not an implementation backlog. If a future concept conflicts with the MVP brief or the MVP section of `docs/UI_SPEC.md`, the MVP documents win until the expansion gate is explicitly passed.
 
-## Current Scope
+## Current Scope and Status
 
-The first build is local-only and supports:
+**Overall MVP status: In progress.** The local reminder foundation is implemented and undergoing acceptance review. Recurrence and attachments are approved next work and must not be reported as implemented until their milestones pass.
+
+The implemented foundation supports:
 
 - Create, view, edit, complete, reopen, and delete reminders.
 - Archive and restore reminders without changing their completion state.
 - Mark or unmark a reminder as Important without changing its completion or archive state.
-- Store a title, optional “why,” optional due date, Important state, status, and timestamps.
+- Store a title, optional Notes, optional due date, Priority, Important state, status, and timestamps.
 - Schedule or cancel a local notification for reminders with a due date.
 - Organize reminders with multiple tags and filter by All, Important, Untagged, or a selected tag.
 - Seed the default tags Work, Personal, Projects, Grocery, Health, and Errands idempotently.
 - Show tags using stable, distinguishable tints while retaining text labels and selection indicators.
 - Show independently collapsible Open, Completed, and Archived sections.
-- Search title and “why” text locally.
+- Search title and Notes text locally.
 - Use Liquid Glass only for navigation, toolbars, search, sheets, menus, dialogs, and transient interactive controls on iOS 26.
 - Render the content layer in pure white or true OLED black with restrained flat cards and thin separators.
+
+The next approved MVP slices add:
+
+- An optional repeat rule for due reminders, with deterministic occurrence history and local-notification behavior.
+- User-selected photo, file, and contact-card attachments scoped to a reminder and stored locally.
+- Attachment preview, removal, failure handling, cleanup, and accessibility behavior in create, edit, and detail flows.
 
 ### Required swipe behavior
 
@@ -70,6 +79,9 @@ Do not introduce the post-MVP Timeline/Today/Future/Insights tab bar into the be
 - Store dates as `Date`; format them only at the UI boundary.
 - Model reminder status explicitly rather than inferring it from dates.
 - Model Important as a persisted Boolean or equivalent explicit state; do not implement it as a tag.
+- Model recurrence explicitly; do not infer it from notification requests or mutate completion history silently.
+- Keep attachment metadata separate from payload storage. Copy user-selected files into app-owned local storage so a reminder never depends on a temporary picker URL.
+- Import contact cards only through an explicit system picker and store a local vCard snapshot. Do not request broad contact access or maintain a live Contacts relationship for the MVP.
 - Seed default tags through an idempotent service or migration-safe operation; never create duplicates on relaunch.
 - Keep tag identity independent of presentation color. Color is a stable display token, not the primary key.
 - Use labels, icons, selected states, and accessibility values so color is never the only distinction.
@@ -93,7 +105,7 @@ Boards communicate hierarchy and flow, not fixed pixel coordinates. Standard con
 ## Proposed Source Layout
 
 ```text
-Breadcrumb/
+TimeLore/
 ├── App/
 ├── Features/
 │   └── Reminders/
@@ -101,8 +113,8 @@ Breadcrumb/
 ├── Services/
 ├── Shared/
 └── Resources/
-BreadcrumbTests/
-BreadcrumbUITests/
+TimeLoreTests/
+TimeLoreUITests/
 docs/
 └── ui/
 ```
@@ -114,7 +126,7 @@ Use this layout as files are needed; do not create empty folders merely to match
 1. Identify the next unchecked milestone in `docs/IOS_IMPLEMENTATION_PLAN.md`.
 2. For UI work, locate the matching MVP page, interaction, and acceptance criteria in `docs/UI_SPEC.md`.
 3. Implement the smallest end-to-end slice that produces user-visible value.
-4. Add or update tests for domain rules, persistence, swipe direction, default-tag seeding, filters, and service behavior.
+4. Add or update tests for domain rules, persistence, swipe direction, default-tag seeding, filters, recurrence, attachment lifecycle, and service behavior.
 5. Build and test using the repository’s shared Xcode scheme.
 6. Update documentation only when scope, architecture, interaction contracts, or setup changed.
 
@@ -126,7 +138,9 @@ The following are concept-only until the MVP trial proves that users repeatedly 
 
 - Timeline, Today, Future, and Insights tabs.
 - Memory, Note, Place, Person, Photo, Receipt, and Project spaces.
-- OCR, receipt intelligence, attachments, semantic or conversational search, summaries, suggestions, weekly review, travel mode, people/place relationships, and cloud sync.
+- OCR, receipt intelligence, audio attachments, semantic or conversational search, summaries, suggestions, weekly review, travel mode, live people/place relationships, and cloud sync.
+
+Basic attachments on reminders—user-selected photos, files, and contact-card snapshots—are explicitly inside the MVP. This approval does not include a standalone Photo space, OCR, media intelligence, broad Contacts access, or relationship graphs.
 
 Post-MVP pages are documented so later architecture has a coherent direction. Their presence in `docs/UI_SPEC.md` is not implementation approval.
 
@@ -135,8 +149,8 @@ Post-MVP pages are documented so later architecture has a coherent direction. Th
 Once an Xcode project exists, prefer commands equivalent to:
 
 ```bash
-xcodebuild -scheme Breadcrumb -destination 'platform=iOS Simulator,name=iPhone 16' build
-xcodebuild -scheme Breadcrumb -destination 'platform=iOS Simulator,name=iPhone 16' test
+xcodebuild -scheme TimeLore -destination 'platform=iOS Simulator,name=iPhone 16' build
+xcodebuild -scheme TimeLore -destination 'platform=iOS Simulator,name=iPhone 16' test
 ```
 
 Discover available simulators first and substitute an installed device. Do not claim a build or test passed unless the command was run successfully. If full Xcode is unavailable, state that limitation and still run any checks that are available.
@@ -148,6 +162,8 @@ Discover available simulators first and substitute an installed device. Do not c
 - Accessibility labels, accessibility values, Dynamic Type, contrast, and Reduced Transparency remain usable.
 - Swipe direction and revealed actions match the specification.
 - Important state and default tags persist without duplication or state coupling.
+- Recurrence advances exactly once per occurrence and preserves completed history when the recurrence slice is involved.
+- Attachment payloads remain local, survive relaunch, handle missing/corrupt data, and are cleaned up when removed or when their owning reminder is deleted.
 - Light mode uses a pure white content layer; dark mode uses true OLED black where practical.
 - Liquid Glass is confined to functional navigation/presentation layers.
 - New business logic has focused tests.

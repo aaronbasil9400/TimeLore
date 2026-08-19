@@ -1,0 +1,122 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* TimeLoreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* TimeLoreApp.swift */; };
+		A10000000000000000000002 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* Reminder.swift */; };
+		A10000000000000000000003 /* ReminderDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* ReminderDraft.swift */; };
+		A10000000000000000000004 /* ReminderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* ReminderListView.swift */; };
+		A10000000000000000000005 /* ReminderEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* ReminderEditorView.swift */; };
+		A10000000000000000000006 /* ReminderDraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* ReminderDraftTests.swift */; };
+		A10000000000000000000007 /* ReminderSortingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* ReminderSortingTests.swift */; };
+		A10000000000000000000008 /* TimeLoreUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* TimeLoreUITests.swift */; };
+		A10000000000000000000009 /* ReminderTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* ReminderTag.swift */; };
+		A10000000000000000000010 /* ReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* ReminderDetailView.swift */; };
+		A10000000000000000000011 /* ReminderTagChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* ReminderTagChip.swift */; };
+		A10000000000000000000012 /* ReminderLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* ReminderLifecycleTests.swift */; };
+		A10000000000000000000013 /* ReminderTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* ReminderTagTests.swift */; };
+		A10000000000000000000014 /* ReminderPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* ReminderPersistenceTests.swift */; };
+		A10000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* Assets.xcassets */; };
+		A10000000000000000000016 /* DefaultReminderTagSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* DefaultReminderTagSeeder.swift */; };
+		A10000000000000000000017 /* ReminderNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* ReminderNotificationService.swift */; };
+		A10000000000000000000018 /* ReminderTagPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* ReminderTagPresentation.swift */; };
+		A10000000000000000000019 /* ReminderImportantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* ReminderImportantTests.swift */; };
+		A10000000000000000000020 /* DefaultReminderTagSeederTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* DefaultReminderTagSeederTests.swift */; };
+		A10000000000000000000021 /* ReminderNotificationPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* ReminderNotificationPolicyTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000000000000000000001 /* TimeLoreApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLoreApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* ReminderDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDraft.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* ReminderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderListView.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* ReminderEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderEditorView.swift; sourceTree = "<group>"; };
+		A20000000000000000000006 /* ReminderDraftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDraftTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000007 /* ReminderSortingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSortingTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000008 /* TimeLoreUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLoreUITests.swift; sourceTree = "<group>"; };
+		A20000000000000000000009 /* TimeLore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeLore.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000010 /* TimeLoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeLoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000011 /* TimeLoreUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeLoreUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000012 /* ReminderTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTag.swift; sourceTree = "<group>"; };
+		A20000000000000000000013 /* ReminderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailView.swift; sourceTree = "<group>"; };
+		A20000000000000000000014 /* ReminderTagChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTagChip.swift; sourceTree = "<group>"; };
+		A20000000000000000000015 /* ReminderLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderLifecycleTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000016 /* ReminderTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTagTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000017 /* ReminderPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderPersistenceTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A20000000000000000000019 /* DefaultReminderTagSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultReminderTagSeeder.swift; sourceTree = "<group>"; };
+		A20000000000000000000020 /* ReminderNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationService.swift; sourceTree = "<group>"; };
+		A20000000000000000000021 /* ReminderTagPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTagPresentation.swift; sourceTree = "<group>"; };
+		A20000000000000000000022 /* ReminderImportantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderImportantTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000023 /* DefaultReminderTagSeederTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultReminderTagSeederTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000024 /* ReminderNotificationPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationPolicyTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A30000000000000000000001 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A30000000000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A30000000000000000000003 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A40000000000000000000001 = {isa = PBXGroup; children = (A40000000000000000000002 /* TimeLore */, A40000000000000000000006 /* TimeLoreTests */, A40000000000000000000007 /* TimeLoreUITests */, A40000000000000000000008 /* Products */); sourceTree = "<group>"; };
+		A40000000000000000000002 /* TimeLore */ = {isa = PBXGroup; children = (A20000000000000000000001 /* TimeLoreApp.swift */, A40000000000000000000003 /* Models */, A40000000000000000000004 /* Features */, A40000000000000000000009 /* Resources */, A40000000000000000000010 /* Services */); path = TimeLore; sourceTree = "<group>"; };
+		A40000000000000000000003 /* Models */ = {isa = PBXGroup; children = (A20000000000000000000002 /* Reminder.swift */, A20000000000000000000003 /* ReminderDraft.swift */, A20000000000000000000012 /* ReminderTag.swift */); path = Models; sourceTree = "<group>"; };
+		A40000000000000000000004 /* Features */ = {isa = PBXGroup; children = (A40000000000000000000005 /* Reminders */); path = Features; sourceTree = "<group>"; };
+		A40000000000000000000005 /* Reminders */ = {isa = PBXGroup; children = (A20000000000000000000004 /* ReminderListView.swift */, A20000000000000000000005 /* ReminderEditorView.swift */, A20000000000000000000013 /* ReminderDetailView.swift */, A20000000000000000000014 /* ReminderTagChip.swift */, A20000000000000000000021 /* ReminderTagPresentation.swift */); path = Reminders; sourceTree = "<group>"; };
+		A40000000000000000000006 /* TimeLoreTests */ = {isa = PBXGroup; children = (A20000000000000000000006 /* ReminderDraftTests.swift */, A20000000000000000000007 /* ReminderSortingTests.swift */, A20000000000000000000015 /* ReminderLifecycleTests.swift */, A20000000000000000000016 /* ReminderTagTests.swift */, A20000000000000000000017 /* ReminderPersistenceTests.swift */, A20000000000000000000022 /* ReminderImportantTests.swift */, A20000000000000000000023 /* DefaultReminderTagSeederTests.swift */, A20000000000000000000024 /* ReminderNotificationPolicyTests.swift */); path = TimeLoreTests; sourceTree = "<group>"; };
+		A40000000000000000000007 /* TimeLoreUITests */ = {isa = PBXGroup; children = (A20000000000000000000008 /* TimeLoreUITests.swift */); path = TimeLoreUITests; sourceTree = "<group>"; };
+		A40000000000000000000008 /* Products */ = {isa = PBXGroup; children = (A20000000000000000000009 /* TimeLore.app */, A20000000000000000000010 /* TimeLoreTests.xctest */, A20000000000000000000011 /* TimeLoreUITests.xctest */); name = Products; sourceTree = "<group>"; };
+		A40000000000000000000009 /* Resources */ = {isa = PBXGroup; children = (A20000000000000000000018 /* Assets.xcassets */); path = Resources; sourceTree = "<group>"; };
+		A40000000000000000000010 /* Services */ = {isa = PBXGroup; children = (A20000000000000000000019 /* DefaultReminderTagSeeder.swift */, A20000000000000000000020 /* ReminderNotificationService.swift */); path = Services; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000000000000000000001 /* TimeLore */ = {isa = PBXNativeTarget; buildConfigurationList = A60000000000000000000001 /* Build configuration list for PBXNativeTarget \"TimeLore\" */; buildPhases = (A70000000000000000000001 /* Sources */, A30000000000000000000001 /* Frameworks */, A80000000000000000000001 /* Resources */); buildRules = (); dependencies = (); name = TimeLore; productName = TimeLore; productReference = A20000000000000000000009 /* TimeLore.app */; productType = "com.apple.product-type.application"; };
+		A50000000000000000000002 /* TimeLoreTests */ = {isa = PBXNativeTarget; buildConfigurationList = A60000000000000000000002 /* Build configuration list for PBXNativeTarget \"TimeLoreTests\" */; buildPhases = (A70000000000000000000002 /* Sources */, A30000000000000000000002 /* Frameworks */); buildRules = (); dependencies = (A90000000000000000000001 /* PBXTargetDependency */); name = TimeLoreTests; productName = TimeLoreTests; productReference = A20000000000000000000010 /* TimeLoreTests.xctest */; productType = "com.apple.product-type.bundle.unit-test"; };
+		A50000000000000000000003 /* TimeLoreUITests */ = {isa = PBXNativeTarget; buildConfigurationList = A60000000000000000000003 /* Build configuration list for PBXNativeTarget \"TimeLoreUITests\" */; buildPhases = (A70000000000000000000003 /* Sources */, A30000000000000000000003 /* Frameworks */); buildRules = (); dependencies = (A90000000000000000000002 /* PBXTargetDependency */); name = TimeLoreUITests; productName = TimeLoreUITests; productReference = A20000000000000000000011 /* TimeLoreUITests.xctest */; productType = "com.apple.product-type.bundle.ui-testing"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000001 /* Project object */ = {isa = PBXProject; attributes = { LastSwiftUpdateCheck = 1600; LastUpgradeCheck = 1600; TargetAttributes = { A50000000000000000000001 = { CreatedOnToolsVersion = 16.0; }; A50000000000000000000002 = { CreatedOnToolsVersion = 16.0; TestTargetID = A50000000000000000000001; }; A50000000000000000000003 = { CreatedOnToolsVersion = 16.0; TestTargetID = A50000000000000000000001; }; }; }; buildConfigurationList = A60000000000000000000004 /* Build configuration list for PBXProject \"TimeLore\" */; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base); mainGroup = A40000000000000000000001; productRefGroup = A40000000000000000000008 /* Products */; projectDirPath = ""; projectRoot = ""; targets = (A50000000000000000000001 /* TimeLore */, A50000000000000000000002 /* TimeLoreTests */, A50000000000000000000003 /* TimeLoreUITests */); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A80000000000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000015 /* Assets.xcassets in Resources */); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A70000000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* TimeLoreApp.swift in Sources */, A10000000000000000000002 /* Reminder.swift in Sources */, A10000000000000000000003 /* ReminderDraft.swift in Sources */, A10000000000000000000009 /* ReminderTag.swift in Sources */, A10000000000000000000004 /* ReminderListView.swift in Sources */, A10000000000000000000005 /* ReminderEditorView.swift in Sources */, A10000000000000000000010 /* ReminderDetailView.swift in Sources */, A10000000000000000000011 /* ReminderTagChip.swift in Sources */, A10000000000000000000016 /* DefaultReminderTagSeeder.swift in Sources */, A10000000000000000000017 /* ReminderNotificationService.swift in Sources */, A10000000000000000000018 /* ReminderTagPresentation.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A70000000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000006 /* ReminderDraftTests.swift in Sources */, A10000000000000000000007 /* ReminderSortingTests.swift in Sources */, A10000000000000000000012 /* ReminderLifecycleTests.swift in Sources */, A10000000000000000000013 /* ReminderTagTests.swift in Sources */, A10000000000000000000014 /* ReminderPersistenceTests.swift in Sources */, A10000000000000000000019 /* ReminderImportantTests.swift in Sources */, A10000000000000000000020 /* DefaultReminderTagSeederTests.swift in Sources */, A10000000000000000000021 /* ReminderNotificationPolicyTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A70000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000008 /* TimeLoreUITests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A90000000000000000000001 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = A50000000000000000000001 /* TimeLore */; };
+		A90000000000000000000002 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = A50000000000000000000001 /* TimeLore */; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		B00000000000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { APP_DISPLAY_NAME = TimeLore; ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_TESTABILITY = YES; GCC_C_LANGUAGE_STANDARD = gnu17; GCC_NO_COMMON_BLOCKS = YES; SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)"; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+		B00000000000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { APP_DISPLAY_NAME = TimeLore; ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; GCC_C_LANGUAGE_STANDARD = gnu17; GCC_NO_COMMON_BLOCKS = YES; SWIFT_COMPILATION_MODE = wholemodule; }; name = Release; };
+		B00000000000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)"; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.breadcrumb.app; PRODUCT_NAME = "$(APP_DISPLAY_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		B00000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)"; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.breadcrumb.app; PRODUCT_NAME = "$(APP_DISPLAY_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+		B00000000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.breadcrumb.app.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/$(APP_DISPLAY_NAME).app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/$(APP_DISPLAY_NAME)"; }; name = Debug; };
+		B00000000000000000000006 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { BUNDLE_LOADER = "$(TEST_HOST)"; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.breadcrumb.app.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/$(APP_DISPLAY_NAME).app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/$(APP_DISPLAY_NAME)"; }; name = Release; };
+		B00000000000000000000007 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.breadcrumb.app.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = TimeLore; }; name = Debug; };
+		B00000000000000000000008 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.breadcrumb.app.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = TimeLore; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A60000000000000000000001 /* Build configuration list for PBXNativeTarget \"TimeLore\" */ = {isa = XCConfigurationList; buildConfigurations = (B00000000000000000000003 /* Debug */, B00000000000000000000004 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A60000000000000000000002 /* Build configuration list for PBXNativeTarget \"TimeLoreTests\" */ = {isa = XCConfigurationList; buildConfigurations = (B00000000000000000000005 /* Debug */, B00000000000000000000006 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A60000000000000000000003 /* Build configuration list for PBXNativeTarget \"TimeLoreUITests\" */ = {isa = XCConfigurationList; buildConfigurations = (B00000000000000000000007 /* Debug */, B00000000000000000000008 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A60000000000000000000004 /* Build configuration list for PBXProject \"TimeLore\" */ = {isa = XCConfigurationList; buildConfigurations = (B00000000000000000000001 /* Debug */, B00000000000000000000002 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = A00000000000000000000001 /* Project object */;
+}
