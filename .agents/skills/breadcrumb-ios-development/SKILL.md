@@ -1,9 +1,9 @@
 ---
 name: breadcrumb-ios-development
-description: Build, change, test, or review the Breadcrumb iOS app in small Xcode-first vertical slices. Use for Breadcrumb Swift, SwiftUI, SwiftData, local-notification, reminder-domain, accessibility, test, architecture, or MVP implementation tasks in this repository.
+description: Build, change, test, or review the TimeLore iOS app in small Xcode-first vertical slices. Use for TimeLore Swift, SwiftUI, SwiftData, local-notification, reminder-domain, accessibility, test, architecture, or MVP implementation tasks in this repository.
 ---
 
-# Breadcrumb iOS Development
+# TimeLore iOS Development
 
 ## Establish Context
 
@@ -31,7 +31,7 @@ If the Xcode project has not been created, follow the bootstrap settings in the 
 
 ## Verify
 
-Discover available schemes and simulators before choosing a destination. Build the shared `Breadcrumb` scheme, then run focused tests and the full suite when feasible.
+Discover available schemes and simulators before choosing a destination. Build the shared `TimeLore` scheme, then run focused tests and the full suite when feasible.
 
 Never report a successful build, test, notification delivery, or simulator flow unless it was observed. Separate automated verification from manual device checks.
 

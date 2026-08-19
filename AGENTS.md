@@ -1,8 +1,8 @@
-# Breadcrumb Repository Guide
+# TimeLore Repository Guide
 
 ## Mission
 
-Build Breadcrumb/TimeLore as an iOS reminder app that preserves the reason behind a reminder. Prove the capture → notify → complete loop before adding the broader memory-assistant vision.
+Build TimeLore as an iOS reminder app that preserves the reason behind a reminder. Prove the capture → notify → complete loop before adding the broader memory-assistant vision.
 
 The beginning phase stays deliberately small, but its interaction model now also includes:
 
@@ -101,8 +101,8 @@ Breadcrumb/
 ├── Services/
 ├── Shared/
 └── Resources/
-BreadcrumbTests/
-BreadcrumbUITests/
+TimeLoreTests/
+TimeLoreUITests/
 docs/
 └── ui/
 ```
@@ -135,7 +135,7 @@ Post-MVP pages are documented so later architecture has a coherent direction. Th
 Once an Xcode project exists, prefer commands equivalent to:
 
 ```bash
-xcodebuild -scheme Breadcrumb -destination 'platform=iOS Simulator,name=iPhone 16' build
+xcodebuild -scheme TimeLore -destination 'platform=iOS Simulator,name=iPhone 16' build
 xcodebuild -scheme Breadcrumb -destination 'platform=iOS Simulator,name=iPhone 16' test
 ```
 

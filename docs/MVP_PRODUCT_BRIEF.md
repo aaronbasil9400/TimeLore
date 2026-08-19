@@ -1,8 +1,8 @@
-# Breadcrumb MVP Product Brief
+# TimeLore MVP Product Brief
 
 ## Product Bet
 
-People often ignore or delete old reminders because the task text no longer explains the original intent. Breadcrumb tests whether adding a lightweight “why” field makes reminders easier to act on later.
+People often ignore or delete old reminders because the task text no longer explains the original intent. TimeLore tests whether adding a lightweight “why” field makes reminders easier to act on later.
 
 ## Target User
 

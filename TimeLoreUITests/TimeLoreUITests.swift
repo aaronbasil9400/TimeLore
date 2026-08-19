@@ -1,6 +1,6 @@
 import XCTest
 
-final class BreadcrumbUITests: XCTestCase {
+final class TimeLoreUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
     }

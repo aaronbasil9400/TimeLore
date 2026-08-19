@@ -2,8 +2,15 @@ import Foundation
 import SwiftData
 import SwiftUI
 
+enum AppIdentity {
+    /// Reads the display name from the Xcode build setting so branding has one source of truth.
+    static var displayName: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? "TimeLore"
+    }
+}
+
 @main
-struct BreadcrumbApp: App {
+struct TimeLoreApp: App {
     private let modelContainer: ModelContainer
 
     init() {

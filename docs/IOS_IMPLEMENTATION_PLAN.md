@@ -1,14 +1,14 @@
-# Breadcrumb iOS Implementation Plan
+# TimeLore iOS Implementation Plan
 
 ## Outcome
 
-Produce a basic, reliable reminders app in Xcode before investing in Breadcrumb’s OCR, location, cloud, or AI vision. Each milestone is a vertical slice that can be demonstrated on a simulator or device.
+Produce a basic, reliable reminders app in Xcode before investing in TimeLore’s OCR, location, cloud, or AI vision. Each milestone is a vertical slice that can be demonstrated on a simulator or device.
 
 ## Project Bootstrap
 
 Create the project in Xcode with these settings:
 
-- Product name: `Breadcrumb`
+- Product name: `TimeLore`
 - Interface: SwiftUI
 - Language: Swift
 - Persistence: SwiftData

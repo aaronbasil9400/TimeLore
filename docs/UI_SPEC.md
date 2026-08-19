@@ -2,7 +2,7 @@
 
 Status: beginning-phase implementation contract plus gated post-MVP design direction  
 Platform: iPhone, SwiftUI, iOS 26 visual language  
-Primary product name in the current Xcode project: Breadcrumb  
+Primary product name in the current Xcode project: TimeLore  
 User-facing design name: TimeLore
 
 ## 1. Purpose and authority

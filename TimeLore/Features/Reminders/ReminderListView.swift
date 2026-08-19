@@ -67,7 +67,7 @@ struct ReminderListView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Breadcrumb")
+            .navigationTitle(AppIdentity.displayName)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("New reminder", systemImage: "plus") {
