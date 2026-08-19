@@ -31,6 +31,11 @@ done
 
 # Rename paths first so the Xcode project and scheme remain discoverable.
 git mv "$old_name.xcodeproj" "$new_name.xcodeproj"
+
+if [[ -e "$new_name.xcodeproj/xcshareddata/xcschemes/$old_name.xcscheme" ]]; then
+  git mv "$new_name.xcodeproj/xcshareddata/xcschemes/$old_name.xcscheme" \
+    "$new_name.xcodeproj/xcshareddata/xcschemes/$new_name.xcscheme"
+fi
 git mv "$old_name" "$new_name"
 git mv "${old_name}Tests" "${new_name}Tests"
 git mv "${old_name}UITests" "${new_name}UITests"
