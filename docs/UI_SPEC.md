@@ -9,7 +9,7 @@ User-facing design name: TimeLore
 
 This document translates the approved TimeLore boards into an implementation-ready contract. It defines what each page, card, filter, button, gesture, state, and presentation surface does.
 
-- The **MVP is in progress**: the reminder foundation is implemented and under acceptance review; recurrence and reminder attachments are the next actionable slices.
+- The **MVP is in acceptance review**: the reminder foundation, custom recurrence, and reminder-scoped photo/file attachments are implemented. Device acceptance for notifications, system pickers, previews, accessibility, and timezone behavior remains.
 - The **post-MVP sections are concept-only** until the user trial passes the expansion gate.
 - The boards establish hierarchy and intent, not fixed pixel measurements.
 - Native SwiftUI behavior, safe areas, Dynamic Type, VoiceOver, Reduced Transparency, and the active iOS SDK take precedence over literal screenshot geometry.
@@ -26,7 +26,7 @@ Purpose: root hierarchy, tag/filter treatments, Important state, and swipe direc
 
 Purpose: creation, default tags, reminder detail, overflow actions, delete confirmation, and dark-mode parity.
 
-No approved board currently depicts recurrence or reminder attachments. For those MVP slices, the written page specifications and acceptance criteria in this document control. Use Apple-native repeat controls and system Photos, Files, Contacts, and preview surfaces; do not infer a post-MVP information architecture from the concept boards.
+No approved board currently depicts recurrence or reminder attachments. For those MVP capabilities, the written page specifications and acceptance criteria in this document control. Use Apple-native repeat controls and system Photos, Files, and preview surfaces; do not infer a post-MVP information architecture from the concept boards.
 
 ### Post-MVP concept
 
@@ -46,7 +46,7 @@ Purpose: Project, Person, Place, Trip, Weekly Review, and Settings/Privacy pages
 
 | Layer | Build now | Defer |
 |---|---|---|
-| Reminder core | Title, optional Notes, optional due date and repeat rule, Priority, tags, Important, status, timestamps, reminder-scoped photo/file/contact-card attachments | People/place relationships and projects |
+| Reminder core | Title, optional Notes, optional due date and repeat rule, Priority, tags, Important, status, timestamps, reminder-scoped photo/file attachments | People/place relationships and projects |
 | Organization | All, Important, Untagged, tag filters; Open/Completed/Archived | General memory graph |
 | Actions | Create, edit, complete/reopen, flag/unflag, archive/restore, delete, attach/preview/remove | Suggestions and predictive timing |
 | Find | Local title/Notes search | Semantic and conversational life search; attachment-content indexing |
@@ -183,15 +183,14 @@ Add an optional persisted recurrence definition for due reminders. The domain sh
 
 MVP recurrence rules are custom weekly, monthly, and yearly schedules with no end condition. Weekly schedules choose one weekday; monthly schedules choose day 1–31; yearly schedules choose one month and use the due-date day. A day unavailable in a shorter month occurs on that month’s final day. Repeats retain the local due time. The UI must never silently assume scope: editing and deleting a recurring reminder present This occurrence and This and future occurrences choices.
 
-Add reminder-scoped attachment metadata and app-owned local payload storage for three MVP types:
+Add reminder-scoped attachment metadata and app-owned local payload storage for two MVP types:
 
 1. Photo selected explicitly through the system photo picker.
 2. File selected explicitly through the system document picker.
-3. Contact card selected explicitly through the system contact picker and stored as a local vCard snapshot.
 
-Attachments are optional and independent of Priority, Important, tags, completion, and archive state. Removing an attachment or deleting its owning reminder removes the app-owned payload. The MVP does not request broad Contacts access, keep a live contact relationship, run OCR, index attachment contents, or upload attachments.
+Attachments are optional and independent of Priority, Important, tags, completion, and archive state. Removing an attachment or deleting its owning reminder removes the app-owned payload. Contact-card capture is outside the MVP. The MVP does not request Contacts access, run OCR, index attachment contents, or upload attachments.
 
-Each reminder accepts up to six attachments, with a combined 15 MB local-storage limit. A photo uses the system photo picker; a file uses the system Files picker and opens with Quick Look where the system supports preview; a contact card is stored as a local vCard snapshot. Recurring-reminder attachments belong to the series, not a single occurrence.
+Each reminder accepts up to six attachments, with a combined 15 MB local-storage limit. A photo uses the system photo picker and shows a visual preview. A file uses the system Files picker, shows a type-appropriate thumbnail when available, and opens with Quick Look where the system supports preview. Tapping an attachment opens its preview; a separate Preview control is secondary. Previewing never removes the attachment. Recurring-reminder attachments belong to the series, not a single occurrence.
 
 ## 7. MVP information architecture
 
@@ -301,7 +300,7 @@ Fields:
 | Priority | None, `!`, `!!`, or `!!!`; visually grouped with Flag but independently set |
 | Tags | Multi-select default and user tags |
 | New tag | Validates, normalizes, selects the created tag |
-| Attachments | Add Photo, Add File, or Add Contact Card; show removable local previews before save |
+| Attachments | Add Photo or Add File; show removable local previews before save |
 | Save | Validates then persists locally |
 
 Permission behavior:
@@ -356,7 +355,6 @@ Delete always presents:
 | Repeat without due date | Inline explanation that a due date is required |
 | Attachment import failed | Retains the reminder draft and offers Retry or Remove |
 | Attachment unavailable/corrupt | Identifies the unavailable item without blocking access to the reminder |
-| Contact access unavailable | Explains that the user can cancel or retry; saving the reminder remains available |
 
 ## 9. MVP interaction timelines
 
@@ -412,7 +410,7 @@ Stopping recurrence preserves already completed occurrences and cancels future n
 ### 9.7 Attach and remove context
 
 ```text
-New/Edit Reminder → Attach → Choose Photo, File, or Contact Card
+New/Edit Reminder → Attach → Choose Photo or File
 → Review local preview → Save → Detail shows attachment
 → Remove → Confirm when data loss is possible → Local payload is cleaned up
 ```
@@ -428,7 +426,7 @@ New/Edit Reminder → Attach → Choose Photo, File, or Contact Card
 - Use semantic system colors and verify contrast in pure-white and OLED-black modes.
 - Persist section expansion, Priority, Important, tags, recurrence, attachment metadata, sort/filter choices where intended, and reminder state.
 - Attachment controls announce type, display name, import state, and available actions; thumbnails are never the only label.
-- System Photos, Files, and Contacts pickers remain user-initiated and provide clear cancel behavior.
+- System Photos and Files pickers remain user-initiated and provide clear cancel behavior.
 - Test locale, 12/24-hour time, long tag names, long titles, and VoiceOver rotor navigation.
 
 ## 11. MVP implementation order
@@ -442,12 +440,12 @@ New/Edit Reminder → Attach → Choose Photo, File, or Contact Card
 7. Adopt system iOS 26 navigation/presentation materials.
 8. Validate light/dark, accessibility, persistence, and UI tests.
 9. Add recurring reminder domain rules, editor/detail UI, occurrence history, and notification reconciliation.
-10. Add local photo, file, and contact-card attachment import, preview, removal, cleanup, and failure handling.
+10. Add local photo and file attachment import, preview, removal, cleanup, and failure handling.
 11. Run the integrated MVP acceptance audit and founder-device trial.
 
 ## 12. MVP acceptance criteria
 
-This checklist remains open until each item has been exercised against the current build. Existing reminder behavior is under acceptance review; recurrence and attachment criteria are approved but not yet implemented.
+This checklist remains open until each item has been exercised against the current build. Existing reminder, recurrence, and photo/file attachment behavior is implemented and under integrated acceptance review; focused automated coverage has passed.
 
 - [ ] Swipe right completes an open reminder.
 - [ ] Swipe right reopens a completed reminder.
@@ -467,11 +465,11 @@ This checklist remains open until each item has been exercised against the curre
 - [ ] Repeat is off by default and cannot be enabled without a due date.
 - [ ] Completing a recurring occurrence preserves history and produces exactly one next occurrence.
 - [ ] Recurrence edits, stopping, archiving, deletion, relaunch, timezone changes, and notification reconciliation do not duplicate or lose occurrences.
-- [ ] A user can add, preview, persist, and remove a photo, file, or contact-card attachment.
+- [ ] A user can add, preview, persist, and remove a photo or file attachment.
 - [ ] Attachments remain available offline after relaunch and preserve their type and accessible display name.
 - [ ] Removing an attachment or deleting its reminder cleans up app-owned payload data without affecting other reminders.
 - [ ] Attachment import denial, cancellation, missing data, and corrupt data never discard the reminder draft or block reminder access.
-- [ ] No OCR, attachment-content indexing, upload, broad Contacts access, or live contact syncing is introduced.
+- [ ] No contact-card capture, OCR, attachment-content indexing, upload, Contacts access, or live contact syncing is introduced.
 
 ---
 
@@ -699,7 +697,7 @@ When implementing a task:
 
 1. State whether it is MVP or post-MVP.
 2. Identify the page and acceptance criteria in this document.
-3. Treat recurrence and reminder-scoped photo/file/contact-card attachments as MVP; refuse other accidental scope expansion from concept boards.
+3. Treat recurrence and reminder-scoped photo/file attachments as MVP; refuse contact-card capture and other accidental scope expansion from concept boards.
 4. Use Apple-native components before introducing custom UI.
 5. Add accessibility identifiers and tests for every changed interaction.
 

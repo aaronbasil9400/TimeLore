@@ -107,7 +107,13 @@ struct ReminderDetailView: View {
                         AttachmentDetailRow(
                             attachment: attachment,
                             payloadURL: attachmentStore.payloadURL(for: attachment),
-                            preview: { url in previewingAttachment = AttachmentPreviewItem(url: url) },
+                            preview: { url in
+                                previewingAttachment = AttachmentPreviewItem(
+                                    id: attachment.id,
+                                    url: url,
+                                    displayName: attachment.displayName
+                                )
+                            },
                             remove: { removeAttachment(attachment) }
                         )
                     }
@@ -182,7 +188,9 @@ struct ReminderDetailView: View {
             Text("This action cannot be undone.")
         }
         .sheet(item: $previewingAttachment) { item in
-            AttachmentPreview(url: item.url)
+            AttachmentPreview(url: item.url, displayName: item.displayName) {
+                previewingAttachment = nil
+            }
         }
     }
 
@@ -274,21 +282,30 @@ private struct AttachmentDetailRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: attachment.kind.symbolName)
-                .frame(width: 24)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(attachment.displayName).lineLimit(1)
-                Text("\(attachment.kind.title) · \(ByteCountFormatter.string(fromByteCount: attachment.byteCount, countStyle: .file))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                if payloadURL == nil {
-                    Text("Attachment unavailable")
-                        .font(.caption)
-                        .foregroundStyle(.red)
+            Button {
+                if let payloadURL { preview(payloadURL) }
+            } label: {
+                HStack(spacing: 12) {
+                    AttachmentThumbnailView(payloadURL: payloadURL, kind: attachment.kind)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(attachment.displayName).lineLimit(1)
+                        Text("\(attachment.kind.title) · \(ByteCountFormatter.string(fromByteCount: attachment.byteCount, countStyle: .file))")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        if payloadURL == nil {
+                            Text("Attachment unavailable")
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            Spacer()
+            .buttonStyle(.plain)
+            .disabled(payloadURL == nil)
+            .accessibilityLabel("Open \(attachment.displayName)")
+            .accessibilityHint(payloadURL == nil ? "Attachment unavailable" : "Opens a preview")
+
             if let payloadURL {
                 Button("Preview") { preview(payloadURL) }
                     .accessibilityLabel("Preview \(attachment.displayName)")
@@ -296,42 +313,63 @@ private struct AttachmentDetailRow: View {
             Button("Remove", role: .destructive, action: remove)
                 .accessibilityLabel("Remove \(attachment.displayName)")
         }
-        .accessibilityElement(children: .combine)
     }
 }
 
 private struct AttachmentPreviewItem: Identifiable {
+    let id: UUID
     let url: URL
-    var id: URL { url }
+    let displayName: String
 }
 
 private struct AttachmentPreview: UIViewControllerRepresentable {
     let url: URL
+    let displayName: String
+    let dismiss: () -> Void
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(url: url)
+        Coordinator(url: url, displayName: displayName, dismiss: dismiss)
     }
 
-    func makeUIViewController(context: Context) -> QLPreviewController {
-        let controller = QLPreviewController()
-        controller.dataSource = context.coordinator
-        return controller
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let previewController = QLPreviewController()
+        previewController.dataSource = context.coordinator
+        previewController.title = displayName
+        previewController.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            systemItem: .done,
+            primaryAction: UIAction { _ in context.coordinator.dismiss() }
+        )
+        return UINavigationController(rootViewController: previewController)
     }
 
-    func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}
 
     final class Coordinator: NSObject, QLPreviewControllerDataSource {
         let url: URL
+        let displayName: String
+        let dismiss: () -> Void
 
-        init(url: URL) {
+        init(url: URL, displayName: String, dismiss: @escaping () -> Void) {
             self.url = url
+            self.displayName = displayName
+            self.dismiss = dismiss
         }
 
         func numberOfPreviewItems(in controller: QLPreviewController) -> Int { 1 }
 
         func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-            url as NSURL
+            NamedPreviewItem(url: url, title: displayName)
         }
+    }
+}
+
+private final class NamedPreviewItem: NSObject, QLPreviewItem {
+    let previewItemURL: URL?
+    let previewItemTitle: String?
+
+    init(url: URL, title: String) {
+        previewItemURL = url
+        previewItemTitle = title
     }
 }
 

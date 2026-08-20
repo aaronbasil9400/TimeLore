@@ -30,7 +30,7 @@ final class TimeLoreUITests: XCTestCase {
         XCTAssertTrue(app.buttons["reminder.repeat"].waitForExistence(timeout: 2))
         app.swipeUp()
         XCTAssertTrue(app.buttons["attachment.addFile"].waitForExistence(timeout: 2))
-        XCTAssertTrue(app.buttons["attachment.addContact"].exists)
+        XCTAssertFalse(app.buttons["attachment.addContact"].exists)
     }
 
     func testSortMenuCanSelectPriorityOrder() {

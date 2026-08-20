@@ -2,13 +2,13 @@
 
 > A detailed, repository-specific guide to the TimeLore iOS application, its Swift and SwiftUI code, SwiftData persistence, local notifications, tests, Xcode project configuration, resources, and supporting documentation.
 
-**Repository snapshot studied:** August 19, 2026<br>
+**Repository snapshot studied:** August 20, 2026<br>
 **Application:** TimeLore<br>
 **Minimum deployment target:** iOS 17<br>
 **Primary technologies:** Swift, SwiftUI, SwiftData, UserNotifications, Swift Testing, XCTest/XCUITest
 
 > [!IMPORTANT]
-> This guide describes the code that exists in the repository at the date above. Recurring reminders and reminder-scoped attachments are approved MVP work, but they are **not implemented in the current Swift source**. Product specifications that describe those features are plans, not evidence that the app already contains them.
+> This guide describes the code that exists in the repository at the date above. The current Swift source implements custom recurring reminders and reminder-scoped photo/file attachments. Contact-card capture is not an MVP feature and is not offered by the UI; the attachment model retains a legacy kind only so any pre-existing local attachment can remain readable or removable. The detailed line-by-line sections below originated with the reminder-foundation snapshot; use the current implementation update and linked source files when studying recurrence or attachments.
 
 ## How to use this guide
 
@@ -76,10 +76,10 @@ The currently implemented application supports:
 - SwiftData local persistence.
 - Accessibility labels, values, hints, and UI-test identifiers for core paths.
 
-Approved but not implemented yet:
+Implemented and in integrated acceptance review:
 
-- Recurring reminder rules and occurrence history.
-- Photo, file, and contact-card attachments.
+- Custom weekly, monthly, and yearly repeat rules, recurrence-series identity, occurrence history, scoped recurring edits, and notification reconciliation.
+- Local photo and file attachments, including app-owned payload storage, preview, removal, and cleanup.
 
 Post-MVP and intentionally out of scope:
 
@@ -88,6 +88,7 @@ Post-MVP and intentionally out of scope:
 - Cloud sync and accounts.
 - People/place relationship graphs.
 - Timeline, Today, Future, or Insights tabs.
+- Contact-card capture or vCard storage.
 
 This distinction matters when learning a codebase. A design document expresses intent; a compiled Swift file expresses implemented behavior.
 
@@ -2649,22 +2650,16 @@ sequenceDiagram
 
 # 20. What is deliberately absent
 
-## 20.1 Approved but not implemented
+## 20.1 Current MVP implementation update
 
-There are currently no Swift files or stored fields for:
+The following source is implemented and covered by focused automated tests; integrated device acceptance remains in progress:
 
-- `RepeatRule`.
-- Recurrence series identity.
-- Occurrence history.
-- Recurrence editor/detail UI.
-- Attachment metadata.
-- Attachment payload storage.
-- Photo picker integration.
-- Document picker integration.
-- Contact picker/vCard snapshots.
-- Attachment preview/removal/cleanup.
+- [`ReminderSeries.swift`](../TimeLore/Models/ReminderSeries.swift) and [`RecurringReminderService.swift`](../TimeLore/Services/RecurringReminderService.swift): custom recurrence rules, series identity, occurrence progression, and scoped changes.
+- [`ReminderAttachment.swift`](../TimeLore/Models/ReminderAttachment.swift) and [`ReminderAttachmentStore.swift`](../TimeLore/Services/ReminderAttachmentStore.swift): attachment metadata, app-owned photo/file payload storage, validation, persistence, and cleanup.
+- [`ReminderEditorView.swift`](../TimeLore/Features/Reminders/ReminderEditorView.swift), [`ReminderDetailView.swift`](../TimeLore/Features/Reminders/ReminderDetailView.swift), and [`AttachmentThumbnailView.swift`](../TimeLore/Features/Reminders/AttachmentThumbnailView.swift): native repeat controls, Photos/Files import, thumbnails, local preview, and removal UI.
+- [`RecurringReminderServiceTests.swift`](../TimeLoreTests/RecurringReminderServiceTests.swift), [`ReminderAttachmentStoreTests.swift`](../TimeLoreTests/ReminderAttachmentStoreTests.swift), and [`ReminderPersistenceTests.swift`](../TimeLoreTests/ReminderPersistenceTests.swift): focused recurrence and attachment coverage.
 
-Do not infer these features from prose in `README.md` or `UI_SPEC.md`. Those documents define intended MVP completion, while code status remains earlier.
+Contact-card import, vCard snapshots, and Contacts access are deliberately absent from the MVP. The attachment model’s legacy contact-card value is compatibility-only, not a supported capture path.
 
 ## 20.2 Post-MVP omissions
 
@@ -2675,6 +2670,7 @@ Do not infer these features from prose in `README.md` or `UI_SPEC.md`. Those doc
 - No multi-device sync.
 - No multi-tab Timeline/Today/Future/Insights shell.
 - No standalone Memory, Photo, Receipt, Place, Person, or Project model.
+- No contact-card capture, vCard storage, or Contacts picker.
 
 ## 20.3 Engineering files intentionally absent
 
@@ -2761,17 +2757,9 @@ List every valid combination of:
 
 There are `2 × 2 × 2 × 4 = 32` combinations before tags/due dates. Identify which UI section and markers each combination produces.
 
-## 21.8 Advanced: design recurrence without implementing it
+## 21.8 Advanced: trace recurrence behavior
 
-Using the current patterns, propose—but do not yet code—types for:
-
-- Repeat cadence.
-- Series identity.
-- Occurrence identity.
-- Completion history.
-- Notification identifiers.
-
-Then evaluate the proposal against Milestone 5’s daylight-saving and end-of-month requirements.
+Trace the implemented recurrence path from `ReminderSeries` through `RecurringReminderService` and the editor/detail views. Then evaluate the production behavior against Milestone 5’s daylight-saving and end-of-month acceptance requirements.
 
 ## 21.9 Xcode debugging checklist
 

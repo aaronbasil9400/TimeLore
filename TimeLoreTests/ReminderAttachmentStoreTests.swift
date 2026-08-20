@@ -19,6 +19,7 @@ struct ReminderAttachmentStoreTests {
         let attachment = try #require(store.commit([draft]).first)
         #expect(store.payloadURL(for: attachment) != nil)
         #expect(attachment.payloadRelativePath.hasPrefix("Payloads/"))
+        #expect(store.payloadURL(for: attachment)?.pathExtension == "txt")
 
         store.removePayload(for: attachment)
         #expect(store.payloadURL(for: attachment) == nil)

@@ -1,5 +1,3 @@
-import Contacts
-import ContactsUI
 import PhotosUI
 import SwiftData
 import SwiftUI
@@ -34,7 +32,6 @@ struct ReminderEditorView: View {
     @State private var removedAttachmentIDs = Set<UUID>()
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var isPresentingFileImporter = false
-    @State private var isPresentingContactPicker = false
     @State private var validationMessage: String?
     @State private var tagValidationMessage: String?
     @State private var attachmentMessage: String?
@@ -239,11 +236,6 @@ struct ReminderEditorView: View {
                 }
                 .accessibilityIdentifier("attachment.addFile")
 
-                Button("Add Contact Card", systemImage: "person.crop.rectangle.badge.plus") {
-                    isPresentingContactPicker = true
-                }
-                .accessibilityIdentifier("attachment.addContact")
-
                 if attachmentCount == 0 {
                     Text("Up to 6 attachments, 15 MB total.")
                         .foregroundStyle(.secondary)
@@ -253,7 +245,8 @@ struct ReminderEditorView: View {
                     AttachmentEditorRow(
                         title: attachment.displayName,
                         subtitle: "\(attachment.kind.title) · \(ByteCountFormatter.string(fromByteCount: attachment.byteCount, countStyle: .file))",
-                        kind: attachment.kind
+                        kind: attachment.kind,
+                        thumbnailURL: attachmentStore.payloadURL(for: attachment)
                     ) {
                         removedAttachmentIDs.insert(attachment.id)
                     }
@@ -263,7 +256,8 @@ struct ReminderEditorView: View {
                     AttachmentEditorRow(
                         title: attachment.displayName,
                         subtitle: "\(attachment.kind.title) · \(ByteCountFormatter.string(fromByteCount: attachment.byteCount, countStyle: .file))",
-                        kind: attachment.kind
+                        kind: attachment.kind,
+                        thumbnailURL: attachmentStore.stagingURL(for: attachment)
                     ) {
                         removeDraftAttachment(attachment)
                     }
@@ -315,11 +309,6 @@ struct ReminderEditorView: View {
         .fileImporter(isPresented: $isPresentingFileImporter, allowedContentTypes: [.item]) { result in
             guard case let .success(url) = result else { return }
             importFile(url)
-        }
-        .sheet(isPresented: $isPresentingContactPicker) {
-            ContactCardPicker { contact in
-                importContact(contact)
-            }
         }
         .onDisappear {
             attachmentStore.discard(draftAttachments)
@@ -419,15 +408,6 @@ struct ReminderEditorView: View {
         } catch {
             attachmentMessage = error.localizedDescription
         }
-    }
-
-    private func importContact(_ contact: CNContact) {
-        guard let data = try? CNContactVCardSerialization.data(with: [contact]) else {
-            attachmentMessage = ReminderAttachmentStoreError.importFailed.localizedDescription
-            return
-        }
-        let name = CNContactFormatter.string(from: contact, style: .fullName) ?? "Contact card"
-        stage(data: data, kind: .contactCard, displayName: name, contentTypeIdentifier: UTType.vCard.identifier)
     }
 
     private func stage(data: Data, kind: ReminderAttachmentKind, displayName: String, contentTypeIdentifier: String) {
@@ -540,12 +520,7 @@ struct ReminderEditorView: View {
             modelContext.delete(attachment)
         }
 
-        let newAttachments = try attachmentStore.commit(draftAttachments)
-        if let series = reminder.recurrenceSeries {
-            series.attachments.append(contentsOf: newAttachments)
-        } else {
-            reminder.attachments.append(contentsOf: newAttachments)
-        }
+        _ = try attachmentStore.commit(draftAttachments, attachingTo: reminder, in: modelContext)
         draftAttachments = []
     }
 }
@@ -554,13 +529,12 @@ private struct AttachmentEditorRow: View {
     let title: String
     let subtitle: String
     let kind: ReminderAttachmentKind
+    let thumbnailURL: URL?
     let remove: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: kind.symbolName)
-                .frame(width: 24)
-                .accessibilityHidden(true)
+            AttachmentThumbnailView(payloadURL: thumbnailURL, kind: kind)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).lineLimit(1)
                 Text(subtitle).font(.caption).foregroundStyle(.secondary)
@@ -570,42 +544,6 @@ private struct AttachmentEditorRow: View {
                 .accessibilityLabel("Remove \(title)")
         }
         .accessibilityElement(children: .combine)
-    }
-}
-
-private struct ContactCardPicker: UIViewControllerRepresentable {
-    let didSelect: (CNContact) -> Void
-    @Environment(\.dismiss) private var dismiss
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(didSelect: didSelect, dismiss: dismiss)
-    }
-
-    func makeUIViewController(context: Context) -> CNContactPickerViewController {
-        let controller = CNContactPickerViewController()
-        controller.delegate = context.coordinator
-        return controller
-    }
-
-    func updateUIViewController(_ uiViewController: CNContactPickerViewController, context: Context) {}
-
-    final class Coordinator: NSObject, CNContactPickerDelegate {
-        private let didSelect: (CNContact) -> Void
-        private let dismiss: DismissAction
-
-        init(didSelect: @escaping (CNContact) -> Void, dismiss: DismissAction) {
-            self.didSelect = didSelect
-            self.dismiss = dismiss
-        }
-
-        func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
-            didSelect(contact)
-            dismiss()
-        }
-
-        func contactPickerDidCancel(_ picker: CNContactPickerViewController) {
-            dismiss()
-        }
     }
 }
 

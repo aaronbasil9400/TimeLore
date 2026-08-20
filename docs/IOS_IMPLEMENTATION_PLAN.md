@@ -2,9 +2,9 @@
 
 ## Outcome
 
-Produce a reliable, local-first reminders app in Xcode before investing in TimeLore’s OCR, location, cloud, or AI vision. The MVP includes the core reminder loop, recurring reminders, and basic reminder-scoped photo, file, and contact-card attachments. Each milestone is a vertical slice that can be demonstrated on a simulator or device.
+Produce a reliable, local-first reminders app in Xcode before investing in TimeLore’s OCR, location, cloud, or AI vision. The MVP includes the core reminder loop, recurring reminders, and basic reminder-scoped photo and file attachments. Each milestone is a vertical slice that can be demonstrated on a simulator or device.
 
-**Overall MVP status: In progress.** Milestones 0–2 are complete. Notification reliability and final polish are under acceptance review. Recurrence is the next implementation slice, followed by local attachments and the integrated MVP trial.
+**Overall MVP status: In acceptance review.** Milestones 0–2 are complete. Milestones 3–6 are implemented with automated coverage; notification delivery, accessibility, timezone behavior, and system-picker/device acceptance remain before the integrated MVP trial.
 
 ## Project Bootstrap
 
@@ -110,7 +110,7 @@ Acceptance criteria:
 - Archive, restore, completion, reopening, deletion, app relaunch, timezone changes, and notification reconciliation do not create duplicate occurrences or pending requests.
 - Recurrence date calculations use calendar/timezone semantics and have focused tests for daylight-saving and end-of-month boundaries.
 
-**Status: In progress.** The recurrence domain, native editor/detail controls, notification identifiers, and focused automated coverage are implemented. Device acceptance of notification delivery and timezone behavior remains.
+**Status: In acceptance review.** The recurrence domain, custom weekly/monthly/yearly editor and detail controls, scoped edit/delete decisions, notification identifiers, and focused automated coverage are implemented. Device acceptance of notification delivery and timezone behavior remains. The latest simulator validation passed the 37 unit/persistence tests and 8 UI tests; system-notification delivery is still a manual device check.
 
 MVP decisions:
 
@@ -119,15 +119,14 @@ MVP decisions:
 - A requested day unavailable in a shorter month uses that month’s final day. The selected local time is retained.
 - Editing a recurring reminder always prompts for This occurrence or This and future occurrences. Deletion uses the same explicit scope wording.
 
-## Milestone 6 — Reminder Attachments
+## Milestone 6 — Photo and File Attachments
 
-Add local, reminder-scoped photo, file, and contact-card attachments without introducing OCR, sync, or a people graph.
+Add local, reminder-scoped photo and file attachments without introducing contact-card capture, OCR, sync, or a people graph.
 
 Acceptance criteria:
 
-- New and Edit Reminder offer explicit Add Photo, Add File, and Add Contact Card actions using Apple system pickers.
+- New and Edit Reminder offer explicit Add Photo and Add File actions using Apple system pickers.
 - Selected payloads are copied into app-owned local storage before temporary picker access expires.
-- Contact cards are stored as user-selected local vCard snapshots; the app does not request broad Contacts access or maintain live contact syncing.
 - Draft and saved attachments show type, accessible display name, thumbnail or icon, import state, and remove action.
 - Saved attachments persist across app termination/relaunch and open through an appropriate local preview.
 - Picker cancellation or permission denial leaves the draft intact and saving available.
@@ -135,12 +134,12 @@ Acceptance criteria:
 - Removing an attachment or deleting its reminder cleans up only the associated app-owned payload.
 - Attachment lifecycle and cleanup have focused persistence/service tests; add/preview/remove have UI coverage.
 
-**Status: In progress.** Local metadata/payload storage, system pickers, preview, removal, cleanup, and focused automated coverage are implemented. System picker and on-device preview acceptance remain.
+**Status: In acceptance review.** Local metadata/payload storage, Photos and Files pickers, photo/file thumbnail previews, Quick Look preview, removal, cleanup, and focused automated coverage are implemented. The latest simulator validation passed the 37 unit/persistence tests and 8 UI tests, including the attachment-control contract and normal/recurring file-persistence coverage. System-picker and on-device preview acceptance remain.
 
 MVP decisions:
 
 - A reminder accepts up to six attachments with a combined 15 MB limit. Any single item that would exceed that total is rejected.
-- Photos come from the system photo picker; files come from the system Files picker and preview through Quick Look when the system supports the type; contact cards are stored as local vCard snapshots. The MVP does not export or share attachments.
+- Photos come from the system photo picker and show a visual preview. Files come from the system Files picker, show a type-appropriate thumbnail when available, and preview through Quick Look when the system supports the type. Tapping an attachment opens its preview; the separate Preview control is a secondary action. Previewing must never remove the attachment. The MVP does not export or share attachments.
 - Recurring reminder attachments belong to the series and are available to every occurrence.
 
 ## Milestone 7 — Integrated Acceptance and Small User Trial
@@ -191,7 +190,7 @@ Store attachment metadata in SwiftData and payloads in an app-owned Application 
 - **Unit tests:** validation, sort order, status transitions, recurrence calculations, occurrence generation, and notification policy.
 - **Persistence tests:** CRUD against an in-memory SwiftData container plus attachment metadata/payload lifecycle and cleanup.
 - **UI tests:** critical reminder, recurrence, and attachment paths plus key empty, cancellation, and permission states.
-- **Manual device tests:** notification delivery, permission settings, background/terminated behavior, Photos/Files/Contacts pickers, local previews, and accessibility.
+- **Manual device tests:** notification delivery, permission settings, background/terminated behavior, Photos/Files pickers, local previews, and accessibility.
 
 ## Decision Gates
 

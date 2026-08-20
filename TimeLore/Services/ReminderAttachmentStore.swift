@@ -1,4 +1,6 @@
 import Foundation
+import SwiftData
+import UniformTypeIdentifiers
 
 enum ReminderAttachmentStoreError: LocalizedError, Equatable {
     case attachmentLimitReached
@@ -54,7 +56,12 @@ struct ReminderAttachmentStore {
 
         try ensureDirectories()
         let id = UUID()
-        let relativePath = "Staging/\(id.uuidString)"
+        let fileExtension = resolvedFileExtension(
+            contentTypeIdentifier: contentTypeIdentifier,
+            displayName: displayName,
+            kind: kind
+        )
+        let relativePath = "Staging/\(id.uuidString)\(fileExtension.map { ".\($0)" } ?? "")"
         let url = rootURL.appendingPathComponent(relativePath)
         do {
             try data.write(to: url, options: .atomic)
@@ -104,7 +111,7 @@ struct ReminderAttachmentStore {
             for draft in drafts {
                 let sourceURL = rootURL.appendingPathComponent(draft.stagingRelativePath)
                 guard fileManager.fileExists(atPath: sourceURL.path) else { throw ReminderAttachmentStoreError.missingPayload }
-                let relativePayloadPath = "Payloads/\(draft.id.uuidString)"
+                let relativePayloadPath = "Payloads/\(sourceURL.lastPathComponent)"
                 let destinationURL = rootURL.appendingPathComponent(relativePayloadPath)
                 try fileManager.moveItem(at: sourceURL, to: destinationURL)
                 committed.append(ReminderAttachment(draft: draft, payloadRelativePath: relativePayloadPath))
@@ -115,6 +122,25 @@ struct ReminderAttachmentStore {
         } catch {
             throw ReminderAttachmentStoreError.importFailed
         }
+    }
+
+    /// Commits payloads and explicitly persists their inverse relationship.
+    /// A recurring occurrence owns attachments through its series.
+    func commit(
+        _ drafts: [ReminderAttachmentDraft],
+        attachingTo reminder: Reminder,
+        in modelContext: ModelContext
+    ) throws -> [ReminderAttachment] {
+        let attachments = try commit(drafts)
+        for attachment in attachments {
+            modelContext.insert(attachment)
+            if let series = reminder.recurrenceSeries {
+                attachment.series = series
+            } else {
+                attachment.reminder = reminder
+            }
+        }
+        return attachments
     }
 
     func discard(_ drafts: [ReminderAttachmentDraft]) {
@@ -132,8 +158,30 @@ struct ReminderAttachmentStore {
         return fileManager.fileExists(atPath: url.path) ? url : nil
     }
 
+    func stagingURL(for draft: ReminderAttachmentDraft) -> URL? {
+        let url = rootURL.appendingPathComponent(draft.stagingRelativePath)
+        return fileManager.fileExists(atPath: url.path) ? url : nil
+    }
+
     private func ensureDirectories() throws {
         try fileManager.createDirectory(at: rootURL.appendingPathComponent("Staging", isDirectory: true), withIntermediateDirectories: true)
         try fileManager.createDirectory(at: rootURL.appendingPathComponent("Payloads", isDirectory: true), withIntermediateDirectories: true)
+    }
+
+    private func resolvedFileExtension(
+        contentTypeIdentifier: String,
+        displayName: String,
+        kind: ReminderAttachmentKind
+    ) -> String? {
+        let typeExtension = UTType(contentTypeIdentifier)?.preferredFilenameExtension
+        let nameExtension = URL(fileURLWithPath: displayName).pathExtension
+        let fallbackExtension: String
+        switch kind {
+        case .photo: fallbackExtension = "jpg"
+        case .file: fallbackExtension = "dat"
+        case .contactCard: fallbackExtension = "vcf"
+        }
+        let candidate = typeExtension ?? (nameExtension.isEmpty ? fallbackExtension : nameExtension)
+        return candidate.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 }

@@ -32,7 +32,7 @@ struct RecurringReminderService {
             now: now
         )
         modelContext.insert(occurrence)
-        series.occurrences.append(occurrence)
+        occurrence.recurrenceSeries = series
         return occurrence
     }
 
@@ -51,10 +51,10 @@ struct RecurringReminderService {
         reminder.recurrenceIndex = 0
         reminder.scheduledAt = dueAt
         reminder.recurrenceOccurrenceIdentifier = "\(series.id.uuidString).0"
-        series.occurrences.append(reminder)
+        reminder.recurrenceSeries = series
         for attachment in Array(reminder.attachments) {
             attachment.reminder = nil
-            series.attachments.append(attachment)
+            attachment.series = series
         }
     }
 
@@ -86,7 +86,7 @@ struct RecurringReminderService {
             now: now
         )
         modelContext.insert(occurrence)
-        series.occurrences.append(occurrence)
+        occurrence.recurrenceSeries = series
         return occurrence
     }
 

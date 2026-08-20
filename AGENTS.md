@@ -10,7 +10,7 @@ The beginning phase stays deliberately small, but its interaction model now also
 - Predictable directional swipe actions.
 - Distinguishable default tags and filters.
 - Apple-native iOS 26 navigation and presentation surfaces.
-- Recurring reminders and reminder-scoped photo, file, and contact-card attachments as the next approved MVP slices.
+- Custom recurring reminders and reminder-scoped photo/file attachments as approved MVP capabilities.
 
 ## Read First
 
@@ -27,7 +27,7 @@ The existing founder documents are vision inputs, not an implementation backlog.
 
 ## Current Scope and Status
 
-**Overall MVP status: In progress.** The local reminder foundation is implemented and undergoing acceptance review. Recurrence and attachments are approved next work and must not be reported as implemented until their milestones pass.
+**Overall MVP status: In acceptance review.** The local reminder foundation, custom recurrence, and photo/file attachment slices are implemented and covered by automated tests. Integrated device acceptance remains before the MVP trial.
 
 The implemented foundation supports:
 
@@ -41,14 +41,17 @@ The implemented foundation supports:
 - Show tags using stable, distinguishable tints while retaining text labels and selection indicators.
 - Show independently collapsible Open, Completed, and Archived sections.
 - Search title and Notes text locally.
+- Create weekly, monthly, and yearly recurring reminders with deterministic occurrence history and local-notification reconciliation.
+- Prompt for **This occurrence** or **This and future occurrences** when editing a recurring reminder.
+- Attach up to six user-selected photos or files per reminder, with a combined 15 MB local-storage limit; recurring attachments belong to the series.
+- Preview photos and supported files locally, remove them without affecting the reminder, and retain payloads across relaunch.
 - Use Liquid Glass only for navigation, toolbars, search, sheets, menus, dialogs, and transient interactive controls on iOS 26.
 - Render the content layer in pure white or true OLED black with restrained flat cards and thin separators.
 
-The next approved MVP slices add:
+The current acceptance focus is:
 
-- An optional repeat rule for due reminders, with deterministic occurrence history and local-notification behavior.
-- User-selected photo, file, and contact-card attachments scoped to a reminder and stored locally.
-- Attachment preview, removal, failure handling, cleanup, and accessibility behavior in create, edit, and detail flows.
+- Manual notification delivery, denied-permission guidance, lifecycle, timezone, and daylight-saving behavior.
+- System Photos and Files picker cancellation, denial, offline preview, removal, cleanup, and accessibility behavior on device.
 
 ### Required swipe behavior
 
@@ -81,7 +84,6 @@ Do not introduce the post-MVP Timeline/Today/Future/Insights tab bar into the be
 - Model Important as a persisted Boolean or equivalent explicit state; do not implement it as a tag.
 - Model recurrence explicitly; do not infer it from notification requests or mutate completion history silently.
 - Keep attachment metadata separate from payload storage. Copy user-selected files into app-owned local storage so a reminder never depends on a temporary picker URL.
-- Import contact cards only through an explicit system picker and store a local vCard snapshot. Do not request broad contact access or maintain a live Contacts relationship for the MVP.
 - Seed default tags through an idempotent service or migration-safe operation; never create duplicates on relaunch.
 - Keep tag identity independent of presentation color. Color is a stable display token, not the primary key.
 - Use labels, icons, selected states, and accessibility values so color is never the only distinction.
@@ -138,9 +140,9 @@ The following are concept-only until the MVP trial proves that users repeatedly 
 
 - Timeline, Today, Future, and Insights tabs.
 - Memory, Note, Place, Person, Photo, Receipt, and Project spaces.
-- OCR, receipt intelligence, audio attachments, semantic or conversational search, summaries, suggestions, weekly review, travel mode, live people/place relationships, and cloud sync.
+- Contact-card capture, OCR, receipt intelligence, audio attachments, semantic or conversational search, summaries, suggestions, weekly review, travel mode, live people/place relationships, and cloud sync.
 
-Basic attachments on reminders—user-selected photos, files, and contact-card snapshots—are explicitly inside the MVP. This approval does not include a standalone Photo space, OCR, media intelligence, broad Contacts access, or relationship graphs.
+Basic attachments on reminders—user-selected photos and files—are explicitly inside the MVP. This approval does not include contact-card capture, a standalone Photo space, OCR, media intelligence, broad Contacts access, or relationship graphs.
 
 Post-MVP pages are documented so later architecture has a coherent direction. Their presence in `docs/UI_SPEC.md` is not implementation approval.
 

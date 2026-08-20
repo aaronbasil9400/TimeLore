@@ -1,5 +1,7 @@
+import Foundation
 import SwiftData
 import Testing
+import UniformTypeIdentifiers
 @testable import TimeLore
 
 @MainActor
@@ -39,6 +41,87 @@ struct ReminderPersistenceTests {
 
         #expect(fetchedReminders.count == 1)
         #expect(fetchedReminders[0].tags.isEmpty)
+    }
+
+    @Test func attachmentRelationshipSurvivesAContextRefetch() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let rootURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: rootURL) }
+        let store = ReminderAttachmentStore(rootURL: rootURL)
+        let draft = try store.stage(
+            data: Data("local context".utf8),
+            kind: .file,
+            displayName: "context.txt",
+            contentTypeIdentifier: UTType.plainText.identifier,
+            existingCount: 0,
+            existingByteCount: 0
+        )
+        let attachment = try #require(store.commit([draft]).first)
+        let reminder = Reminder(draft: ReminderDraft(title: "Keep the context"))
+
+        context.insert(reminder)
+        context.insert(attachment)
+        attachment.reminder = reminder
+        try context.save()
+
+        let reloadedContext = ModelContext(container)
+        let reloadedReminder = try #require(reloadedContext.fetch(FetchDescriptor<Reminder>()).first)
+        let reloadedAttachment = try #require(reloadedReminder.attachments.first)
+
+        #expect(reloadedAttachment.displayName == "context.txt")
+        #expect(store.payloadURL(for: reloadedAttachment)?.pathExtension == "txt")
+    }
+
+    @Test func importedFileAttachmentsPersistForNormalAndRecurringReminders() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let rootURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: rootURL) }
+        let sourceURL = rootURL.appendingPathComponent("source/agenda.txt")
+        try FileManager.default.createDirectory(at: sourceURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data("agenda context".utf8).write(to: sourceURL)
+
+        let store = ReminderAttachmentStore(rootURL: rootURL.appendingPathComponent("storage", isDirectory: true))
+        let normalFile = try store.stage(
+            fileAt: sourceURL,
+            displayName: "agenda.txt",
+            contentTypeIdentifier: UTType.plainText.identifier,
+            existingCount: 0,
+            existingByteCount: 0
+        )
+        let recurringFile = try store.stage(
+            fileAt: sourceURL,
+            displayName: "agenda.txt",
+            contentTypeIdentifier: UTType.plainText.identifier,
+            existingCount: 0,
+            existingByteCount: 0
+        )
+        try FileManager.default.removeItem(at: sourceURL)
+
+        let normalReminder = Reminder(draft: ReminderDraft(title: "Read agenda"))
+        context.insert(normalReminder)
+        try store.commit([normalFile], attachingTo: normalReminder, in: context)
+
+        let dueAt = Date.now.addingTimeInterval(86_400)
+        let repeatRule = ReminderRepeatRule.from(dueAt: dueAt, frequency: .weekly)
+        let recurringReminder = RecurringReminderService().createRecurringReminder(
+            from: ReminderDraft(title: "Weekly agenda", dueAt: dueAt, repeatRule: repeatRule),
+            tags: [],
+            in: context
+        )
+        try store.commit([recurringFile], attachingTo: recurringReminder, in: context)
+        try context.save()
+
+        let reloadedContext = ModelContext(container)
+        let reminders = try reloadedContext.fetch(FetchDescriptor<Reminder>())
+        let reloadedNormal = try #require(reminders.first(where: { $0.id == normalReminder.id }))
+        let reloadedRecurring = try #require(reminders.first(where: { $0.id == recurringReminder.id }))
+
+        #expect(reloadedNormal.attachments.map(\.displayName) == ["agenda.txt"])
+        #expect(reloadedRecurring.attachments.isEmpty)
+        #expect(reloadedRecurring.recurrenceSeries?.attachments.map(\.displayName) == ["agenda.txt"])
+        #expect(store.payloadURL(for: try #require(reloadedRecurring.recurrenceSeries?.attachments.first)) != nil)
     }
 
     private func makeContainer() throws -> ModelContainer {

@@ -1,6 +1,6 @@
 # TimeLore MVP Product Brief
 
-**Status: In progress.** The core reminder experience is implemented and under acceptance review. Recurring reminders and reminder-scoped attachments are the next approved MVP slices.
+**Status: In acceptance review.** The core reminder experience, custom recurrence, and reminder-scoped photo/file attachments are implemented. Device acceptance for notifications, system pickers, previews, accessibility, and timezone behavior remains before the MVP trial.
 
 ## Product Bet
 
@@ -30,13 +30,14 @@ Start with one audience: a busy individual who creates personal follow-ups, erra
 - Notes: optional plain text, up to 2,000 characters.
 - Due date: optional.
 - Repeat rule: optional and available only when a due date is set.
+- Repeat options: custom weekly (one weekday), monthly (day 1–31), or yearly (one month and the due-date day); an unavailable day uses the final day of that month.
 - Priority: none, level 1 (`!`), level 2 (`!!`), or level 3 (`!!!`), separate from Important.
 - Status: open or completed.
 - Created and last-updated timestamps.
 - Completion timestamp when completed.
 - Archive timestamp when hidden from the main workflow.
 - Zero or more tags.
-- Zero or more local reminder attachments: photo, file, or user-selected contact-card snapshot.
+- Zero or more local reminder attachments: photo or file, up to six items and 15 MB combined per reminder.
 
 ### Experiences
 
@@ -52,14 +53,16 @@ Start with one audience: a busy individual who creates personal follow-ups, erra
 - Case-insensitive local search across title and Notes.
 - Local notification request only when the user first saves a dated reminder.
 - Create, inspect, edit, and stop a recurring reminder without duplicating or losing occurrence history.
-- Add, preview, and remove photo, file, and contact-card attachments from reminder create/edit/detail flows.
+- When editing a recurring reminder, explicitly choose whether the edit applies to this occurrence or this and future occurrences.
+- Add, preview, and remove photo and file attachments from reminder create/edit/detail flows.
+- Photos show a visual preview; supported files show a thumbnail and open with the system preview. Opening a preview never removes the attachment.
 - Keep attachment data local and usable offline.
 - Clear in-app behavior when notification permission is denied.
 
 ## Non-Goals
 
 - Receipt scanning or OCR.
-- Audio attachments, camera/OCR workflows, and attachment intelligence.
+- Contact-card capture, audio attachments, camera/OCR workflows, and attachment intelligence.
 - Broad contact import, background contact syncing, or a people relationship graph.
 - Location-triggered reminders.
 - Natural-language date parsing.
@@ -91,4 +94,4 @@ Avoid building analytics infrastructure solely for the first internal test; inte
 
 ## Expansion Gate
 
-Recurring reminders and basic reminder-scoped attachments are approved within this MVP and do not pass the expansion gate. Do not start the broader memory platform until the MVP trial shows that users repeatedly add and retrieve context. OCR, independent memory/photo spaces, semantic intelligence, relationships, and sync remain gated.
+Recurring reminders and basic reminder-scoped photo/file attachments are approved within this MVP and do not pass the expansion gate. Contact-card capture, OCR, independent memory/photo spaces, semantic intelligence, relationships, and sync remain gated until a future product decision explicitly approves them.
