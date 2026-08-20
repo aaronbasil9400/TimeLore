@@ -110,13 +110,14 @@ Acceptance criteria:
 - Archive, restore, completion, reopening, deletion, app relaunch, timezone changes, and notification reconciliation do not create duplicate occurrences or pending requests.
 - Recurrence date calculations use calendar/timezone semantics and have focused tests for daylight-saving and end-of-month boundaries.
 
-**Status: Next — approved MVP scope; implementation not started.**
+**Status: In progress.** The recurrence domain, native editor/detail controls, notification identifiers, and focused automated coverage are implemented. Device acceptance of notification delivery and timezone behavior remains.
 
-Product decisions to close before coding:
+MVP decisions:
 
-- Which cadence presets and custom intervals ship in the MVP.
-- Whether recurrence can end by date, occurrence count, both, or neither.
-- Exact “this occurrence” versus “this and future occurrences” behavior for edit and delete.
+- Repeats are custom weekly, monthly, or yearly schedules only; there are no arbitrary intervals or end conditions.
+- Weekly chooses one weekday. Monthly chooses day 1–31. Yearly chooses a month and retains the due-date day.
+- A requested day unavailable in a shorter month uses that month’s final day. The selected local time is retained.
+- Editing a recurring reminder always prompts for This occurrence or This and future occurrences. Deletion uses the same explicit scope wording.
 
 ## Milestone 6 — Reminder Attachments
 
@@ -134,13 +135,13 @@ Acceptance criteria:
 - Removing an attachment or deleting its reminder cleans up only the associated app-owned payload.
 - Attachment lifecycle and cleanup have focused persistence/service tests; add/preview/remove have UI coverage.
 
-**Status: Approved MVP scope; queued after the recurrence slice.**
+**Status: In progress.** Local metadata/payload storage, system pickers, preview, removal, cleanup, and focused automated coverage are implemented. System picker and on-device preview acceptance remain.
 
-Product decisions to close before coding:
+MVP decisions:
 
-- Attachment count, individual-size, and total-per-reminder limits.
-- Supported photo and file formats and whether files may be exported through the share sheet.
-- Whether attachments belong to a recurring series, a single occurrence, or can be chosen explicitly for either.
+- A reminder accepts up to six attachments with a combined 15 MB limit. Any single item that would exceed that total is rejected.
+- Photos come from the system photo picker; files come from the system Files picker and preview through Quick Look when the system supports the type; contact cards are stored as local vCard snapshots. The MVP does not export or share attachments.
+- Recurring reminder attachments belong to the series and are available to every occurrence.
 
 ## Milestone 7 — Integrated Acceptance and Small User Trial
 

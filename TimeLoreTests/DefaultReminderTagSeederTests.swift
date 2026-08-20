@@ -31,6 +31,12 @@ struct DefaultReminderTagSeederTests {
     }
 
     private func makeContainer() throws -> ModelContainer {
-        try ModelContainer(for: Reminder.self, ReminderTag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        try ModelContainer(
+            for: Reminder.self,
+            ReminderTag.self,
+            ReminderSeries.self,
+            ReminderAttachment.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
     }
 }

@@ -6,6 +6,7 @@ struct ReminderDraft: Equatable, Sendable {
     var dueAt: Date?
     var isImportant = false
     var priority = ReminderPriority.none
+    var repeatRule: ReminderRepeatRule?
 
     var normalizedTitle: String {
         title.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -30,6 +31,14 @@ struct ReminderDraft: Equatable, Sendable {
 
         if let dueAt, dueAt <= now, dueAt != originalDueAt {
             return "Choose a future date and time."
+        }
+
+        if repeatRule != nil, dueAt == nil {
+            return "Add a due date and time before setting a repeat schedule."
+        }
+
+        if let repeatRule, !repeatRule.isValid {
+            return "Choose a valid repeat schedule."
         }
 
         return nil

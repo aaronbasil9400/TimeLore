@@ -46,6 +46,8 @@ struct ReminderPersistenceTests {
         return try ModelContainer(
             for: Reminder.self,
             ReminderTag.self,
+            ReminderSeries.self,
+            ReminderAttachment.self,
             configurations: configuration
         )
     }

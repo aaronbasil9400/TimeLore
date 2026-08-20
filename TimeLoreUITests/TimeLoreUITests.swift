@@ -19,6 +19,20 @@ final class TimeLoreUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Tag Work"].exists)
     }
 
+    func testNewReminderFormUsesTheNativeRepeatAndAttachmentControls() {
+        let app = makeApp()
+        app.launch()
+
+        app.buttons["New reminder"].firstMatch.tap()
+        let dueDateToggle = app.switches["Set a due date"]
+        dueDateToggle.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+
+        XCTAssertTrue(app.buttons["reminder.repeat"].waitForExistence(timeout: 2))
+        app.swipeUp()
+        XCTAssertTrue(app.buttons["attachment.addFile"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.buttons["attachment.addContact"].exists)
+    }
+
     func testSortMenuCanSelectPriorityOrder() {
         let app = makeApp()
         app.launch()

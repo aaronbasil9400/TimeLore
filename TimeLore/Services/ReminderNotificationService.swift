@@ -76,7 +76,7 @@ final class ReminderNotificationService: ObservableObject {
     /// Returns true only when a user-facing denied-permission callout should be shown.
     func reconcile(_ reminder: Reminder, requestAuthorizationIfNeeded: Bool) async -> Bool {
         guard ReminderNotificationPolicy.shouldSchedule(reminder) else {
-            await client.cancel(reminderID: reminder.id.uuidString)
+            await client.cancel(reminderID: reminder.notificationIdentifier)
             return false
         }
 
@@ -90,7 +90,7 @@ final class ReminderNotificationService: ObservableObject {
         }
 
         await client.schedule(
-            reminderID: reminder.id.uuidString,
+            reminderID: reminder.notificationIdentifier,
             title: reminder.title,
             reason: reminder.reason,
             dueAt: dueAt
@@ -99,6 +99,6 @@ final class ReminderNotificationService: ObservableObject {
     }
 
     func cancel(for reminder: Reminder) async {
-        await client.cancel(reminderID: reminder.id.uuidString)
+        await client.cancel(reminderID: reminder.notificationIdentifier)
     }
 }

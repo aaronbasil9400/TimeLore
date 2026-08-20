@@ -30,6 +30,8 @@ struct TimeLoreApp: App {
             modelContainer = try ModelContainer(
                 for: Reminder.self,
                 ReminderTag.self,
+                ReminderSeries.self,
+                ReminderAttachment.self,
                 configurations: configuration
             )
             try DefaultReminderTagSeeder.seed(in: modelContainer.mainContext)

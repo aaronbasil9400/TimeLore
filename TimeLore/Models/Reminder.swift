@@ -34,8 +34,14 @@ final class Reminder {
     var archivedAt: Date?
     var isImportant: Bool = false
     var priorityRawValue: Int = ReminderPriority.none.rawValue
+    var recurrenceIndex: Int?
+    var scheduledAt: Date?
+    var recurrenceOccurrenceIdentifier: String?
+    var recurrenceSeries: ReminderSeries?
     @Relationship(deleteRule: .nullify, inverse: \ReminderTag.reminders)
     var tags: [ReminderTag] = []
+    @Relationship(deleteRule: .cascade, inverse: \ReminderAttachment.reminder)
+    var attachments: [ReminderAttachment] = []
 
     var status: ReminderStatus {
         get { ReminderStatus(rawValue: statusRawValue) ?? .open }
@@ -59,6 +65,9 @@ final class Reminder {
         archivedAt = nil
         isImportant = draft.isImportant
         priorityRawValue = draft.priority.rawValue
+        recurrenceIndex = nil
+        scheduledAt = nil
+        recurrenceOccurrenceIdentifier = nil
     }
 }
 
@@ -71,6 +80,18 @@ extension Reminder {
         isImportant = draft.isImportant
         priority = draft.priority
         updatedAt = now
+    }
+
+    var notificationIdentifier: String {
+        recurrenceOccurrenceIdentifier ?? id.uuidString
+    }
+
+    var isRecurringOccurrence: Bool {
+        recurrenceSeries != nil
+    }
+
+    var visibleAttachments: [ReminderAttachment] {
+        recurrenceSeries?.attachments ?? attachments
     }
 
     func complete(at date: Date = .now) {

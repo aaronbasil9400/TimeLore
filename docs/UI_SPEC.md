@@ -181,7 +181,7 @@ Add an optional persisted recurrence definition for due reminders. The domain sh
 - Stopping recurrence does not delete completed occurrence history.
 - Calendar calculations use Calendar and timezone-aware date components rather than fixed second offsets.
 
-The supported MVP cadences, end conditions, and edit/delete scope wording must be confirmed before recurrence implementation begins. The UI must never silently assume whether an edit applies to one occurrence or the remaining series.
+MVP recurrence rules are custom weekly, monthly, and yearly schedules with no end condition. Weekly schedules choose one weekday; monthly schedules choose day 1–31; yearly schedules choose one month and use the due-date day. A day unavailable in a shorter month occurs on that month’s final day. Repeats retain the local due time. The UI must never silently assume scope: editing and deleting a recurring reminder present This occurrence and This and future occurrences choices.
 
 Add reminder-scoped attachment metadata and app-owned local payload storage for three MVP types:
 
@@ -190,6 +190,8 @@ Add reminder-scoped attachment metadata and app-owned local payload storage for 
 3. Contact card selected explicitly through the system contact picker and stored as a local vCard snapshot.
 
 Attachments are optional and independent of Priority, Important, tags, completion, and archive state. Removing an attachment or deleting its owning reminder removes the app-owned payload. The MVP does not request broad Contacts access, keep a live contact relationship, run OCR, index attachment contents, or upload attachments.
+
+Each reminder accepts up to six attachments, with a combined 15 MB local-storage limit. A photo uses the system photo picker; a file uses the system Files picker and opens with Quick Look where the system supports preview; a contact card is stored as a local vCard snapshot. Recurring-reminder attachments belong to the series, not a single occurrence.
 
 ## 7. MVP information architecture
 

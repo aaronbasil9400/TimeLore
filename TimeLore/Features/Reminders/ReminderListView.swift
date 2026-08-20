@@ -4,6 +4,7 @@ import SwiftUI
 struct ReminderListView: View {
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var notificationService: ReminderNotificationService
+    @Environment(\.modelContext) private var modelContext
     @Query private var reminders: [Reminder]
     @Query(sort: \ReminderTag.name) private var tags: [ReminderTag]
 
@@ -124,6 +125,11 @@ struct ReminderListView: View {
                 NavigationStack { ReminderEditorView() }
             }
         }
+        .task {
+            for reminder in reminders {
+                _ = await notificationService.reconcile(reminder, requestAuthorizationIfNeeded: false)
+            }
+        }
     }
 
     private var tagFilterRow: some View {
@@ -179,14 +185,12 @@ struct ReminderListView: View {
     private func progressSwipeAction(for reminder: Reminder) -> some View {
         if reminder.status == .completed {
             Button("Reopen", systemImage: "arrow.uturn.backward") {
-                reminder.reopen()
-                reconcileNotification(for: reminder)
+                toggleCompletion(for: reminder)
             }
             .tint(.blue)
         } else {
             Button("Complete", systemImage: "checkmark") {
-                reminder.complete()
-                reconcileNotification(for: reminder)
+                toggleCompletion(for: reminder)
             }
             .tint(.green)
         }
@@ -230,10 +234,15 @@ struct ReminderListView: View {
     }
 
     private func toggleCompletion(for reminder: Reminder) {
+        let recurrenceService = RecurringReminderService()
         if reminder.status == .completed {
-            reminder.reopen()
+            let removedSuccessor = recurrenceService.reopen(reminder, in: modelContext)
+            if let removedSuccessor {
+                Task { await notificationService.cancel(for: removedSuccessor) }
+            }
         } else {
-            reminder.complete()
+            let next = recurrenceService.complete(reminder, in: modelContext)
+            if let next { reconcileNotification(for: next) }
         }
         reconcileNotification(for: reminder)
     }
@@ -339,6 +348,12 @@ private struct ReminderRowContent: View {
             parts.append(isOverdue ? "Overdue" : "Due")
             parts.append(dueAt.formatted(date: .abbreviated, time: .shortened))
         }
+        if let rule = reminder.recurrenceSeries?.repeatRule, reminder.recurrenceSeries?.isStopped == false {
+            parts.append(rule.summary())
+        }
+        if !reminder.visibleAttachments.isEmpty {
+            parts.append("\(reminder.visibleAttachments.count) attachments")
+        }
         if !sortedTags.isEmpty { parts.append("Tags: \(sortedTags.map(\.name).joined(separator: ", "))") }
         return parts.joined(separator: ", ")
     }
@@ -365,6 +380,19 @@ private struct ReminderRowContent: View {
                     .font(.caption)
                     .foregroundStyle(isOverdue ? .red : .secondary)
             }
+            if reminder.recurrenceSeries?.isStopped == false || !reminder.visibleAttachments.isEmpty {
+                HStack(spacing: 10) {
+                    if reminder.recurrenceSeries?.isStopped == false {
+                        Label("Repeats", systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    if !reminder.visibleAttachments.isEmpty {
+                        Label("\(reminder.visibleAttachments.count)", systemImage: "paperclip")
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            }
             if !sortedTags.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
@@ -382,5 +410,5 @@ private struct ReminderRowContent: View {
 #Preview("Reminders") {
     ReminderListView()
         .environmentObject(ReminderNotificationService())
-        .modelContainer(for: [Reminder.self, ReminderTag.self], inMemory: true)
+        .modelContainer(for: [Reminder.self, ReminderTag.self, ReminderSeries.self, ReminderAttachment.self], inMemory: true)
 }
