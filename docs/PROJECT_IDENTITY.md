@@ -24,7 +24,8 @@ Keep user-facing copy independent of the internal target/module name wherever pr
 
 - `AppIcon.appiconset` contains the approved TimeLore app icon with light and dark appearances.
 - `TimeLoreLogo.imageset` contains the matching light and dark wordmark used on Reminder Home.
-- The home view shows the expanded wordmark at rest and a compact version while the list scrolls.
+- The home view shows the expanded wordmark and its grouped Overflow/Plus Liquid Glass pill on one row at rest; the filter rail follows below.
+- While the list scrolls, a compact wordmark and the same grouped actions overlay the top of the content without reserving an empty navigation row or shifting the list.
 - Maintain light-mode and dark-mode variants together; do not flatten the two treatments into a single asset with a baked-in background.
 
 ## Renaming later

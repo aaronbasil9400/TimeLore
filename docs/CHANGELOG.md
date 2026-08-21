@@ -15,6 +15,7 @@ This log records user-visible features that have landed on `main`. It is not a r
 
 ### Changed
 
+- Reminder Home now keeps its wordmark and grouped Overflow/Plus Liquid Glass pill on one row at rest; the compact scrolling header overlays content without a blank navigation-bar gap or scroll jitter.
 - Tag presentation is persisted with the tag instead of being inferred solely from its name.
 - Tag filters use stable tag identity, so a renamed tag remains selected.
 - Recurring-series tag templates stay in sync when a tag is renamed or deleted.

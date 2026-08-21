@@ -98,51 +98,12 @@ struct ReminderListView: View {
             .scrollContentBackground(.hidden)
             .background(colorScheme == .dark ? Color.black : Color.white)
             .modifier(BrandScrollTrackingModifier(isCompact: $isBrandHeaderCompact))
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $searchText, prompt: "Search reminders")
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    if isBrandHeaderCompact {
-                        TimeLoreBrandLogo(
-                            width: min(compactLogoWidth, 116),
-                            accessibilityIdentifier: "brand.logo.compact"
-                        )
-                        .transition(.opacity.combined(with: .scale(scale: 0.96)))
-                    }
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Section("Sort") {
-                            Button {
-                                sortModeRawValue = ReminderSortMode.dueDate.rawValue
-                            } label: {
-                                Label("Due date", systemImage: sortMode == .dueDate ? "checkmark" : "calendar")
-                            }
-                            Button {
-                                sortModeRawValue = ReminderSortMode.priority.rawValue
-                            } label: {
-                                Label("Priority", systemImage: sortMode == .priority ? "checkmark" : "exclamationmark.3")
-                            }
-                        }
-
-                        Button {
-                            isPresentingTagManagement = true
-                        } label: {
-                            Label("Manage Tags", systemImage: "tag")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .font(.subheadline.weight(.semibold))
-                            .frame(width: 44, height: 44)
-                    }
-                    .accessibilityLabel("More options")
-                    .accessibilityValue("Sorted by \(sortMode.accessibilityName)")
-                    .accessibilityIdentifier("reminder.moreActions")
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Button("New reminder", systemImage: "plus") { isPresentingNewReminder = true }
-                        .accessibilityHint("Creates a reminder with optional context, due date, tags, and Important state")
+            .toolbar(.hidden, for: .navigationBar)
+            .overlay(alignment: .top) {
+                if isBrandHeaderCompact {
+                    compactHeader
+                        .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
             .animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: isBrandHeaderCompact)
@@ -171,15 +132,86 @@ struct ReminderListView: View {
                 width: min(expandedLogoWidth, 196),
                 accessibilityIdentifier: "brand.logo.expanded"
             )
-            Spacer(minLength: 0)
+            Spacer(minLength: 8)
+            if !isBrandHeaderCompact {
+                headerActions
+            }
         }
         .padding(.top, 8)
         .padding(.bottom, 4)
         .listRowInsets(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 18))
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
-        .onAppear { isBrandHeaderCompact = false }
-        .onDisappear { isBrandHeaderCompact = true }
+    }
+
+    private var compactHeader: some View {
+        HStack(spacing: 8) {
+            TimeLoreBrandLogo(
+                width: min(compactLogoWidth, 116),
+                accessibilityIdentifier: "brand.logo.compact"
+            )
+            Spacer(minLength: 8)
+            headerActions
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 8)
+        .background(.regularMaterial)
+    }
+
+    private var moreActionsButton: some View {
+        Menu {
+            Section("Sort") {
+                Button {
+                    sortModeRawValue = ReminderSortMode.dueDate.rawValue
+                } label: {
+                    Label("Due date", systemImage: sortMode == .dueDate ? "checkmark" : "calendar")
+                }
+                Button {
+                    sortModeRawValue = ReminderSortMode.priority.rawValue
+                } label: {
+                    Label("Priority", systemImage: sortMode == .priority ? "checkmark" : "exclamationmark.3")
+                }
+            }
+
+            Button {
+                isPresentingTagManagement = true
+            } label: {
+                Label("Manage Tags", systemImage: "tag")
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.primary)
+                .frame(width: 52, height: 52)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("More options")
+        .accessibilityValue("Sorted by \(sortMode.accessibilityName)")
+        .accessibilityIdentifier("reminder.moreActions")
+    }
+
+    private var newReminderButton: some View {
+        Button {
+            isPresentingNewReminder = true
+        } label: {
+            Image(systemName: "plus")
+                .font(.system(size: 30, weight: .medium))
+                .foregroundStyle(.blue)
+                .frame(width: 52, height: 52)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("New reminder")
+        .accessibilityHint("Creates a reminder with optional context, due date, tags, and Important state")
+    }
+
+    private var headerActions: some View {
+        HStack(spacing: 8) {
+            moreActionsButton
+            newReminderButton
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .modifier(HeaderActionsGlassModifier())
     }
 
     private var tagFilterRow: some View {
@@ -326,13 +358,31 @@ private struct BrandScrollTrackingModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         if #available(iOS 18.0, *) {
-            content.onScrollGeometryChange(for: Bool.self) { geometry in
-                geometry.contentOffset.y > 40
-            } action: { _, newValue in
-                isCompact = newValue
+            content.onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y
+            } action: { _, offset in
+                let threshold: CGFloat = isCompact ? 24 : 56
+                let shouldCompact = offset > threshold
+                guard shouldCompact != isCompact else { return }
+                isCompact = shouldCompact
             }
         } else {
             content
+        }
+    }
+}
+
+private struct HeaderActionsGlassModifier: ViewModifier {
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+                .background(.regularMaterial, in: Capsule())
+                .glassEffect(.regular, in: Capsule())
+        } else {
+            content
+                .background(.regularMaterial, in: Capsule())
+                .overlay(Capsule().strokeBorder(.primary.opacity(0.12), lineWidth: 1))
         }
     }
 }

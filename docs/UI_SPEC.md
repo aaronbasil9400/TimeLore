@@ -230,9 +230,9 @@ Purpose: scan, filter, search, and act on reminders without unnecessary navigati
 
 | Element | Function | Interaction |
 |---|---|---|
-| TimeLore brand mark | Establishes the root | Uses the matching light/dark asset and compacts while scrolling |
-| Plus control | Creates a reminder | Opens the New Reminder sheet |
-| Overflow menu | Secondary home actions | Chooses Due date/Priority sorting and opens Manage Tags; visually secondary to Plus |
+| TimeLore brand mark | Establishes the root | Uses the matching light/dark asset. At rest, it shares the first row with the home actions; it compacts into a pinned header while scrolling without changing the list's layout. |
+| Plus control | Creates a reminder | Opens the New Reminder sheet; shown with a blue tint inside the grouped home-action pill. |
+| Overflow menu | Secondary home actions | Chooses Due date/Priority sorting and opens Manage Tags; grouped with Plus in one Liquid Glass pill and visually secondary to Plus. |
 | Search | Finds title or Notes text locally | Case-insensitive; clearing restores normal sections |
 | All chip | Removes tag/priority filter | Shows every reminder inside its status section |
 | Important chip | Priority filter | Shows only `isImportant == true` reminders inside each status section |
@@ -249,6 +249,12 @@ Filter rules:
 - Search text and the selected filter combine with logical AND.
 - Each status section displays the count after search/filtering.
 - A filtered empty state says what removed the results and offers “Clear filters.”
+
+Home-header rules:
+
+- The expanded wordmark and grouped Overflow/Plus pill occupy one row; the filter rail begins on the next row.
+- Reminder Home does not reserve an otherwise-empty navigation bar above that expanded header.
+- When the list scrolls, the compact wordmark and grouped actions overlay the content at the top rather than altering the list's size or scroll offset. The transition must remain stable when the user reverses direction near the threshold.
 
 ### 8.2 Reminder-card anatomy
 
