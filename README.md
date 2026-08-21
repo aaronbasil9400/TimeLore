@@ -11,6 +11,7 @@ The repository contains the TimeLore Xcode project, product documentation, and i
 - [MVP product brief](docs/MVP_PRODUCT_BRIEF.md) — the first-product boundary.
 - [UI specification](docs/UI_SPEC.md) — the interaction, accessibility, and visual contract.
 - [iOS implementation plan](docs/IOS_IMPLEMENTATION_PLAN.md) — ordered vertical slices and acceptance criteria.
+- [Changelog](docs/CHANGELOG.md) — shipped user-visible features on `main`.
 - [Agent guidance](AGENTS.md) — engineering rules for people and coding agents.
 - [Original app concept](Documentation/Breadcrumb%20App%20Concept.md) — long-term vision, not current scope.
 
@@ -26,7 +27,9 @@ The first release is a private, offline reminder app with:
 - Independent Priority and Important controls.
 - Open and completed lists.
 - Archiving and independently collapsible status sections.
-- Multi-tag organization and filtering.
+- A light/dark TimeLore app icon and a responsive home-screen brand mark.
+- Multi-tag organization, filtering, and home-overflow tag management.
+- Tag creation, rename, color, and icon editing; deleting a tag detaches it from reminders without deleting the reminders.
 - Local text search.
 - SwiftData persistence.
 

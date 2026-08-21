@@ -16,9 +16,16 @@ The app target's `APP_DISPLAY_NAME` build setting in `TimeLore.xcodeproj/project
 
 - The built product name.
 - The generated bundle display name.
-- The navigation title exposed through `AppIdentity.displayName`.
+- The accessible label and fallback user-facing name exposed through `AppIdentity.displayName`.
 
 Keep user-facing copy independent of the internal target/module name wherever practical.
+
+## Brand assets
+
+- `AppIcon.appiconset` contains the approved TimeLore app icon with light and dark appearances.
+- `TimeLoreLogo.imageset` contains the matching light and dark wordmark used on Reminder Home.
+- The home view shows the expanded wordmark at rest and a compact version while the list scrolls.
+- Maintain light-mode and dark-mode variants together; do not flatten the two treatments into a single asset with a baked-in background.
 
 ## Renaming later
 

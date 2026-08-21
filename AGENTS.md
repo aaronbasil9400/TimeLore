@@ -39,6 +39,9 @@ The implemented foundation supports:
 - Organize reminders with multiple tags and filter by All, Important, Untagged, or a selected tag.
 - Seed the default tags Work, Personal, Projects, Grocery, Health, and Errands idempotently.
 - Show tags using stable, distinguishable tints while retaining text labels and selection indicators.
+- Manage default and custom tags from the home overflow: create, rename, choose an icon/color, or delete safely.
+- Preserve a tag's identity when renamed; deleting a tag detaches it from reminders and recurring templates without deleting reminders.
+- Keep a user-deleted default tag deleted across relaunch unless the user explicitly recreates it.
 - Show independently collapsible Open, Completed, and Archived sections.
 - Search title and Notes text locally.
 - Create weekly, monthly, and yearly recurring reminders with deterministic occurrence history and local-notification reconciliation.
@@ -101,6 +104,8 @@ The final boards referenced by `docs/UI_SPEC.md` live in `docs/ui/`:
 - `post-mvp-core-navigation.webp`
 - `post-mvp-capture-life-search.webp`
 - `post-mvp-connected-spaces-trust.webp`
+- `TimeLore_Logo_Light.jpg` and `TimeLore_Logo_Dark.jpg`
+- `TimeLore_Icon_Light.jpg` and `TimeLore_Icon_Dark.jpg`
 
 Boards communicate hierarchy and flow, not fixed pixel coordinates. Standard controls, safe areas, Dynamic Type, and current SDK behavior take precedence over literal screenshot measurements.
 

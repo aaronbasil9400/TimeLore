@@ -37,6 +37,7 @@ Start with one audience: a busy individual who creates personal follow-ups, erra
 - Completion timestamp when completed.
 - Archive timestamp when hidden from the main workflow.
 - Zero or more tags.
+- Tag name, stable presentation color, and supported SF Symbol; default and custom tags can be managed independently of reminder state.
 - Zero or more local reminder attachments: photo or file, up to six items and 15 MB combined per reminder.
 
 ### Experiences
@@ -50,6 +51,9 @@ Start with one audience: a busy individual who creates personal follow-ups, erra
 - Delete with confirmation.
 - Independently collapsible Open, Completed, and Archived sections whose state persists.
 - Multi-tag creation, selection, display, and filtering.
+- Manage Tags from the home overflow: create, rename, recolor, re-icon, and delete default or custom tags.
+- Deleting an in-use tag requires confirmation, removes only that tag relationship, and never deletes reminders.
+- A renamed or deleted default tag remains renamed or deleted after relaunch; tag changes also apply to future recurring occurrences.
 - Case-insensitive local search across title and Notes.
 - Local notification request only when the user first saves a dated reminder.
 - Create, inspect, edit, and stop a recurring reminder without duplicating or losing occurrence history.
