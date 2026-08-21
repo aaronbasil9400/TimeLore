@@ -4,18 +4,28 @@ struct ReminderTagPresentation {
     let color: Color
     let symbol: String
 
+    static func forTag(_ tag: ReminderTag) -> Self {
+        Self(color: color(for: tag.colorToken), symbol: tag.resolvedSymbolName)
+    }
+
     static func forTag(named name: String) -> Self {
-        switch ReminderTag.normalizedName(from: name) {
-        case "work": return Self(color: .blue, symbol: "briefcase")
-        case "personal": return Self(color: .purple, symbol: "person")
-        case "projects": return Self(color: .indigo, symbol: "folder")
-        case "grocery": return Self(color: .green, symbol: "cart")
-        case "health": return Self(color: .pink, symbol: "heart")
-        case "errands": return Self(color: .teal, symbol: "checklist")
-        default:
-            let palette: [(Color, String)] = [(.cyan, "tag"), (.mint, "tag"), (.orange, "tag"), (.brown, "tag")]
-            let index = name.unicodeScalars.reduce(0) { ($0 + Int($1.value)) % palette.count }
-            return Self(color: palette[index].0, symbol: palette[index].1)
+        Self(color: color(for: ReminderTag.deterministicColorToken(for: name)), symbol: "tag")
+    }
+
+    static func color(for token: ReminderTagColorToken) -> Color {
+        switch token {
+        case .blue: .blue
+        case .indigo: .indigo
+        case .purple: .purple
+        case .pink: .pink
+        case .red: .red
+        case .orange: .orange
+        case .green: .green
+        case .mint: .mint
+        case .teal: .teal
+        case .cyan: .cyan
+        case .brown: .brown
+        case .gray: .gray
         }
     }
 }

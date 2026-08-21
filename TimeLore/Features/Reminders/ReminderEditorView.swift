@@ -105,12 +105,22 @@ struct ReminderEditorView: View {
     private var tagOptions: [TagOption] {
         var options = Dictionary(
             uniqueKeysWithValues: availableTags.map {
-                ($0.normalizedName, TagOption(id: $0.normalizedName, name: $0.name))
+                ($0.normalizedName, TagOption(
+                    id: $0.normalizedName,
+                    name: $0.name,
+                    colorToken: $0.colorToken,
+                    symbolName: $0.resolvedSymbolName
+                ))
             }
         )
 
         for (normalizedName, displayName) in pendingTagNames {
-            options[normalizedName] = TagOption(id: normalizedName, name: displayName)
+            options[normalizedName] = TagOption(
+                id: normalizedName,
+                name: displayName,
+                colorToken: ReminderTag.deterministicColorToken(for: displayName),
+                symbolName: "tag"
+            )
         }
 
         return options.values.sorted {
@@ -195,7 +205,9 @@ struct ReminderEditorView: View {
                                 } label: {
                                     ReminderTagChip(
                                         name: option.name,
-                                        isSelected: selectedTagNames.contains(option.id)
+                                        isSelected: selectedTagNames.contains(option.id),
+                                        colorToken: option.colorToken,
+                                        symbol: option.symbolName
                                     )
                                 }
                                 .buttonStyle(.plain)
@@ -450,6 +462,7 @@ struct ReminderEditorView: View {
 
             guard let displayName = pendingTagNames[normalizedName] else { return nil }
             let tag = ReminderTag(name: displayName)
+            DefaultReminderTagSeeder.prepareNewTag(tag, useDefaultAppearance: true, in: modelContext)
             modelContext.insert(tag)
             return tag
         }
@@ -550,6 +563,8 @@ private struct AttachmentEditorRow: View {
 private struct TagOption: Identifiable {
     let id: String
     let name: String
+    let colorToken: ReminderTagColorToken
+    let symbolName: String
 }
 
 #Preview {

@@ -135,9 +135,13 @@ Requirements:
 
 - Seeding is idempotent.
 - Case-insensitive normalized names prevent duplicates.
-- Existing user-created tags are not overwritten.
+- Stable default identity is independent of the visible name.
+- Renaming a default does not recreate its original name on relaunch.
+- Deleting a default suppresses reseeding until the user explicitly creates that default name again.
+- Existing non-default user tags are not overwritten.
 - Default tags can be selected like any other tag.
-- Later tag-management features may rename or hide defaults, but MVP creation and selection must not depend on hard-coded database identifiers.
+- Default and user-created tags can be renamed, recolored, assigned a supported symbol, or deleted from Manage Tags.
+- MVP creation and selection must not depend on hard-coded database identifiers.
 
 ## 6. Reminder domain additions
 
@@ -198,6 +202,9 @@ Each reminder accepts up to six attachments, with a combined 15 MB local-storage
 Reminder Home
 ├── Search
 ├── Filter rail
+├── Overflow
+│   ├── Sort
+│   └── Manage Tags sheet
 ├── Open section
 ├── Completed section
 ├── Archived section
@@ -223,9 +230,9 @@ Purpose: scan, filter, search, and act on reminders without unnecessary navigati
 
 | Element | Function | Interaction |
 |---|---|---|
-| Large “TimeLore” title | Establishes the root | Becomes compact using native navigation behavior while scrolling |
+| TimeLore brand mark | Establishes the root | Uses the matching light/dark asset and compacts while scrolling |
 | Plus control | Creates a reminder | Opens the New Reminder sheet |
-| Sort control | Chooses Open-reminder ordering | Due date (default) or Priority; visually secondary to Plus |
+| Overflow menu | Secondary home actions | Chooses Due date/Priority sorting and opens Manage Tags; visually secondary to Plus |
 | Search | Finds title or Notes text locally | Case-insensitive; clearing restores normal sections |
 | All chip | Removes tag/priority filter | Shows every reminder inside its status section |
 | Important chip | Priority filter | Shows only `isImportant == true` reminders inside each status section |
@@ -356,6 +363,25 @@ Delete always presents:
 | Attachment import failed | Retains the reminder draft and offers Retry or Remove |
 | Attachment unavailable/corrupt | Identifies the unavailable item without blocking access to the reminder |
 
+### 8.8 Manage Tags
+
+Presentation:
+
+- Opens from Manage Tags in the Reminder Home overflow menu.
+- Uses a native inset sheet with Done, New tag, and an inline navigation title.
+- Lists default and user tags with their persisted symbol, tint, visible name, and reminder usage count.
+
+Behavior:
+
+- New and Edit Tag support a validated name, one supported semantic color token, and one supported SF Symbol.
+- Names are trimmed, limited to 30 characters, and unique after case-insensitive normalization.
+- Renames update existing reminder chips, filters, and recurring-series tag templates without changing tag identity.
+- Swipe left reveals Delete with full swipe disabled.
+- Deleting an unused tag may complete immediately.
+- Deleting an in-use tag requires confirmation that states the number of affected reminders and explicitly says reminders will not be deleted.
+- Confirmed deletion detaches the tag from every reminder and recurring template, but never deletes, completes, archives, or otherwise mutates a reminder.
+- Deleting a default tag persists across relaunch and does not cause the seeder to restore it silently.
+
 ## 9. MVP interaction timelines
 
 ### 9.1 Create
@@ -415,6 +441,17 @@ New/Edit Reminder → Attach → Choose Photo or File
 → Remove → Confirm when data loss is possible → Local payload is cleaned up
 ```
 
+### 9.8 Manage tags
+
+```text
+Home → Overflow → Manage Tags
+├── New tag → Name/color/icon → Save → Home filter rail updates
+├── Existing tag → Edit name/color/icon → Save → Existing reminders update
+└── Swipe left → Delete
+    ├── Unused → Tag removed
+    └── In use → Confirmation → Tag detached; reminders remain
+```
+
 ## 10. MVP accessibility and resilience
 
 - VoiceOver card label combines title, Notes summary, due and repeat state, Priority, Important state, tags, and attachment count in a predictable order.
@@ -457,6 +494,9 @@ This checklist remains open until each item has been exercised against the curre
 - [ ] Sort menu defaults to Due date and supports explicit Priority ordering.
 - [ ] All, Important, and tag chips are visually and semantically distinct.
 - [ ] Default tags are seeded once without duplicates.
+- [ ] Default and user tags can be renamed and restyled without losing reminder relationships.
+- [ ] A renamed or deleted default is not silently recreated on relaunch.
+- [ ] Deleting an in-use tag requires confirmation and leaves every reminder intact.
 - [ ] Color is never the only indicator.
 - [ ] Liquid Glass is limited to functional navigation/presentation surfaces.
 - [ ] No bottom tab bar appears in the MVP.

@@ -3,16 +3,22 @@ import SwiftUI
 
 struct ReminderListView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @EnvironmentObject private var notificationService: ReminderNotificationService
     @Environment(\.modelContext) private var modelContext
     @Query private var reminders: [Reminder]
     @Query(sort: \ReminderTag.name) private var tags: [ReminderTag]
+
+    @ScaledMetric(relativeTo: .largeTitle) private var expandedLogoWidth = 148
+    @ScaledMetric(relativeTo: .headline) private var compactLogoWidth = 92
 
     @AppStorage("reminderSections.open.expanded") private var isOpenExpanded = true
     @AppStorage("reminderSections.completed.expanded") private var isCompletedExpanded = false
     @AppStorage("reminderSections.archived.expanded") private var isArchivedExpanded = false
 
     @State private var isPresentingNewReminder = false
+    @State private var isPresentingTagManagement = false
+    @State private var isBrandHeaderCompact = false
     @State private var searchText = ""
     @State private var tagFilter: TagFilter = .all
     @AppStorage("reminderSortMode") private var sortModeRawValue = ReminderSortMode.dueDate.rawValue
@@ -45,9 +51,7 @@ struct ReminderListView: View {
     }
 
     private func defaultTagRank(for tag: ReminderTag) -> Int {
-        DefaultReminderTagSeeder.defaultNames.firstIndex {
-            ReminderTag.normalizedName(from: $0) == tag.normalizedName
-        } ?? .max
+        DefaultReminderTagSeeder.rank(for: tag)
     }
 
     private var sortMode: ReminderSortMode {
@@ -57,6 +61,7 @@ struct ReminderListView: View {
     var body: some View {
         NavigationStack {
             List {
+                brandHeader
                 tagFilterRow
 
                 if reminders.isEmpty {
@@ -92,37 +97,65 @@ struct ReminderListView: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .background(colorScheme == .dark ? Color.black : Color.white)
-            .navigationTitle(AppIdentity.displayName)
+            .modifier(BrandScrollTrackingModifier(isCompact: $isBrandHeaderCompact))
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $searchText, prompt: "Search reminders")
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    if isBrandHeaderCompact {
+                        TimeLoreBrandLogo(
+                            width: min(compactLogoWidth, 116),
+                            accessibilityIdentifier: "brand.logo.compact"
+                        )
+                        .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
-                        Button {
-                            sortModeRawValue = ReminderSortMode.dueDate.rawValue
-                        } label: {
-                            Label("Due date", systemImage: sortMode == .dueDate ? "checkmark" : "calendar")
+                        Section("Sort") {
+                            Button {
+                                sortModeRawValue = ReminderSortMode.dueDate.rawValue
+                            } label: {
+                                Label("Due date", systemImage: sortMode == .dueDate ? "checkmark" : "calendar")
+                            }
+                            Button {
+                                sortModeRawValue = ReminderSortMode.priority.rawValue
+                            } label: {
+                                Label("Priority", systemImage: sortMode == .priority ? "checkmark" : "exclamationmark.3")
+                            }
                         }
+
                         Button {
-                            sortModeRawValue = ReminderSortMode.priority.rawValue
+                            isPresentingTagManagement = true
                         } label: {
-                            Label("Priority", systemImage: sortMode == .priority ? "checkmark" : "exclamationmark.3")
+                            Label("Manage Tags", systemImage: "tag")
                         }
                     } label: {
-                        Image(systemName: "arrow.up.arrow.down")
+                        Image(systemName: "ellipsis")
                             .font(.subheadline.weight(.semibold))
                             .frame(width: 44, height: 44)
                     }
-                    .accessibilityLabel("Sort reminders")
-                    .accessibilityValue(sortMode.accessibilityName)
-                    .accessibilityIdentifier("reminder.sort")
+                    .accessibilityLabel("More options")
+                    .accessibilityValue("Sorted by \(sortMode.accessibilityName)")
+                    .accessibilityIdentifier("reminder.moreActions")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button("New reminder", systemImage: "plus") { isPresentingNewReminder = true }
                         .accessibilityHint("Creates a reminder with optional context, due date, tags, and Important state")
                 }
             }
+            .animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: isBrandHeaderCompact)
             .sheet(isPresented: $isPresentingNewReminder) {
                 NavigationStack { ReminderEditorView() }
+            }
+            .sheet(isPresented: $isPresentingTagManagement) {
+                TagManagementView()
+            }
+            .onChange(of: tags.map(\.id)) { _, tagIDs in
+                guard case let .tag(selectedTagID) = tagFilter,
+                      !tagIDs.contains(selectedTagID) else { return }
+                tagFilter = .all
             }
         }
         .task {
@@ -132,30 +165,66 @@ struct ReminderListView: View {
         }
     }
 
+    private var brandHeader: some View {
+        HStack {
+            TimeLoreBrandLogo(
+                width: min(expandedLogoWidth, 196),
+                accessibilityIdentifier: "brand.logo.expanded"
+            )
+            Spacer(minLength: 0)
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .listRowInsets(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 18))
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+        .onAppear { isBrandHeaderCompact = false }
+        .onDisappear { isBrandHeaderCompact = true }
+    }
+
     private var tagFilterRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: 10) {
                 filterButton(title: "All", symbol: "tray.full", tint: .gray, filter: .all)
                 filterButton(title: "Important", symbol: "flag.fill", tint: .orange, filter: .important)
                 filterButton(title: "Untagged", symbol: "tag.slash", tint: .gray, filter: .untagged)
                 ForEach(orderedTags) { tag in
-                    filterButton(title: tag.name, filter: .tag(tag.normalizedName))
+                    filterButton(tag: tag)
                 }
             }
-            .padding(.horizontal)
-            .padding(.vertical, 2)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 6)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+        .listRowInsets(EdgeInsets(top: 2, leading: 0, bottom: 8, trailing: 0))
+        .listRowSeparator(.hidden)
         .accessibilityLabel("Filter reminders")
     }
 
     private func filterButton(title: String, symbol: String? = nil, tint: Color? = nil, filter: TagFilter) -> some View {
         Button { tagFilter = filter } label: {
-            ReminderTagChip(name: title, isSelected: tagFilter == filter, symbol: symbol, tint: tint)
+            ReminderTagChip(
+                name: title,
+                isSelected: tagFilter == filter,
+                symbol: symbol,
+                tint: tint,
+                style: .filter
+            )
         }
         .buttonStyle(.plain)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.16), value: tagFilter == filter)
         .accessibilityLabel("\(title) filter")
+        .accessibilityValue(tagFilter == filter ? "Selected" : "Not selected")
+    }
+
+    private func filterButton(tag: ReminderTag) -> some View {
+        let filter = TagFilter.tag(tag.id)
+        return Button { tagFilter = filter } label: {
+            ReminderTagChip(tag: tag, isSelected: tagFilter == filter, style: .filter)
+        }
+        .buttonStyle(.plain)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.16), value: tagFilter == filter)
+        .accessibilityLabel("\(tag.name) filter")
         .accessibilityValue(tagFilter == filter ? "Selected" : "Not selected")
     }
 
@@ -177,6 +246,9 @@ struct ReminderListView: View {
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         organizationSwipeActions(for: reminder)
                     }
+                    .listRowInsets(EdgeInsets(top: 3, leading: 16, bottom: 3, trailing: 16))
+                    .listRowSeparatorTint(Color.secondary.opacity(0.2))
+                    .listRowBackground(Color.clear)
             }
         }
     }
@@ -220,7 +292,7 @@ struct ReminderListView: View {
         case .all: true
         case .important: reminder.isImportant
         case .untagged: reminder.tags.isEmpty
-        case let .tag(normalizedName): reminder.tags.contains { $0.normalizedName == normalizedName }
+        case let .tag(tagID): reminder.tags.contains { $0.id == tagID }
         }
     }
 
@@ -248,11 +320,28 @@ struct ReminderListView: View {
     }
 }
 
+private struct BrandScrollTrackingModifier: ViewModifier {
+    @Binding var isCompact: Bool
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, *) {
+            content.onScrollGeometryChange(for: Bool.self) { geometry in
+                geometry.contentOffset.y > 40
+            } action: { _, newValue in
+                isCompact = newValue
+            }
+        } else {
+            content
+        }
+    }
+}
+
 private enum TagFilter: Equatable {
     case all
     case important
     case untagged
-    case tag(String)
+    case tag(UUID)
 }
 
 private enum ReminderSortMode: String {
@@ -276,7 +365,8 @@ private struct ReminderDisclosureSection<Content: View>: View {
             content()
         } label: {
             HStack {
-                Text(title).font(.headline)
+                Text(title)
+                    .font(.headline.weight(.semibold))
                 Spacer()
                 Text(count, format: .number)
                     .font(.subheadline.monospacedDigit())
@@ -287,6 +377,9 @@ private struct ReminderDisclosureSection<Content: View>: View {
             .accessibilityLabel("\(title), \(count) reminders")
             .accessibilityHint(isExpanded ? "Double tap to collapse" : "Double tap to expand")
         }
+        .tint(.secondary)
+        .listRowInsets(EdgeInsets(top: 8, leading: 18, bottom: 8, trailing: 18))
+        .listRowBackground(Color.clear)
         .accessibilityIdentifier(identifier)
     }
 }
@@ -295,13 +388,22 @@ private struct ReminderListItem: View {
     let reminder: Reminder
     let completionAction: () -> Void
 
+    private var statusTint: Color {
+        if reminder.status == .completed { return .green }
+        if reminder.isImportant { return .orange }
+        if let firstTag = reminder.tags.sorted(by: { $0.name < $1.name }).first {
+            return ReminderTagPresentation.forTag(firstTag).color
+        }
+        return .blue
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             if reminder.archivedAt == nil {
                 Button(action: completionAction) {
                     Image(systemName: reminder.status == .completed ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(reminder.status == .completed ? Color.green : Color.secondary)
-                        .font(.title2)
+                        .foregroundStyle(statusTint)
+                        .font(.title2.weight(.medium))
                         .frame(width: 44, height: 44)
                 }
                 .buttonStyle(.borderless)
@@ -310,8 +412,8 @@ private struct ReminderListItem: View {
                 .accessibilityIdentifier("reminder.completionControl")
             } else {
                 Image(systemName: reminder.status == .completed ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(reminder.status == .completed ? Color.green : Color.secondary)
-                    .font(.title2)
+                    .foregroundStyle(statusTint)
+                    .font(.title2.weight(.medium))
                     .frame(width: 44, height: 44)
                     .accessibilityHidden(true)
             }
@@ -324,7 +426,7 @@ private struct ReminderListItem: View {
             .accessibilityHint("Double tap to open. Swipe right to \(reminder.status == .completed ? "reopen" : "complete"). Swipe left for flag and archive actions.")
             .accessibilityIdentifier("reminder.row.\(reminder.id.uuidString)")
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 5)
     }
 }
 
@@ -370,7 +472,9 @@ private struct ReminderRowContent: View {
                         .foregroundStyle(.red)
                         .accessibilityHidden(true)
                 }
-                Text(reminder.title).font(.headline).lineLimit(2)
+                Text(reminder.title)
+                    .font(.body.weight(.semibold))
+                    .lineLimit(2)
             }
             if !reminder.reason.isEmpty {
                 Text(reminder.reason).font(.subheadline).foregroundStyle(.secondary).lineLimit(2)
@@ -396,7 +500,7 @@ private struct ReminderRowContent: View {
             if !sortedTags.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
-                        ForEach(sortedTags.prefix(3)) { tag in ReminderTagChip(name: tag.name) }
+                        ForEach(sortedTags.prefix(3)) { tag in ReminderTagChip(tag: tag) }
                         if sortedTags.count > 3 {
                             Text("+\(sortedTags.count - 3)").font(.caption.weight(.medium)).foregroundStyle(.secondary)
                         }
@@ -404,6 +508,21 @@ private struct ReminderRowContent: View {
                 }
             }
         }
+    }
+}
+
+private struct TimeLoreBrandLogo: View {
+    let width: CGFloat
+    let accessibilityIdentifier: String
+
+    var body: some View {
+        Image("TimeLoreLogo")
+            .resizable()
+            .scaledToFit()
+            .frame(width: width)
+            .accessibilityLabel(AppIdentity.displayName)
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityIdentifier(accessibilityIdentifier)
     }
 }
 

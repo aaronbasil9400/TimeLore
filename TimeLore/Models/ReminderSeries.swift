@@ -185,6 +185,16 @@ final class ReminderSeries {
         templateTagNamesData = (try? JSONEncoder().encode(tagNames.sorted())) ?? templateTagNamesData
         updatedAt = now
     }
+
+    func replaceTemplateTag(named oldName: String, with newName: String?, now: Date = .now) {
+        guard templateTagNames.contains(oldName) else { return }
+        var names = Set(templateTagNames.filter { $0 != oldName })
+        if let newName {
+            names.insert(newName)
+        }
+        templateTagNamesData = (try? JSONEncoder().encode(names.sorted())) ?? templateTagNamesData
+        updatedAt = now
+    }
 }
 
 private extension Collection {

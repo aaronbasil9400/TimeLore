@@ -23,6 +23,7 @@ struct TimeLoreApp: App {
             defaults.removeObject(forKey: "reminderSections.open.expanded")
             defaults.removeObject(forKey: "reminderSections.completed.expanded")
             defaults.removeObject(forKey: "reminderSections.archived.expanded")
+            DefaultReminderTagSeeder.resetSuppressedDefaults(in: defaults)
         }
 
         do {

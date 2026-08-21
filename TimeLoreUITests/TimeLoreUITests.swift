@@ -9,9 +9,15 @@ final class TimeLoreUITests: XCTestCase {
         let app = makeApp()
         app.launch()
 
+        XCTAssertTrue(app.images["brand.logo.expanded"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["Remember what, and why."].waitForExistence(timeout: 2))
         XCTAssertTrue(app.buttons["Work filter"].exists)
         XCTAssertTrue(app.buttons["Important filter"].exists)
+        XCTAssertEqual(app.buttons["All filter"].value as? String, "Selected")
+
+        app.buttons["Important filter"].tap()
+        XCTAssertEqual(app.buttons["Important filter"].value as? String, "Selected")
+        XCTAssertEqual(app.buttons["All filter"].value as? String, "Not selected")
 
         app.buttons["New reminder"].firstMatch.tap()
         XCTAssertTrue(app.navigationBars["New reminder"].waitForExistence(timeout: 2))
@@ -37,11 +43,77 @@ final class TimeLoreUITests: XCTestCase {
         let app = makeApp()
         app.launch()
 
-        let sortButton = app.buttons["reminder.sort"]
-        sortButton.tap()
+        let moreButton = app.buttons["reminder.moreActions"]
+        moreButton.tap()
         app.buttons["Priority"].tap()
 
-        XCTAssertEqual(sortButton.value as? String, "Priority")
+        XCTAssertEqual(moreButton.value as? String, "Sorted by Priority")
+    }
+
+    func testCanCreateAndRestyleATagFromTheHomeOverflow() {
+        let app = makeApp()
+        app.launch()
+
+        openTagManagement(in: app)
+        XCTAssertTrue(app.navigationBars["Manage Tags"].waitForExistence(timeout: 2))
+        app.buttons["tag.manage.add"].tap()
+
+        let nameField = app.textFields["tag.editor.name"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: 2))
+        nameField.tap()
+        nameField.typeText("Travel")
+        app.buttons["tag.color.red"].tap()
+        scrollUntilHittable(app.buttons["tag.icon.airplane"], in: app)
+        app.buttons["tag.icon.airplane"].tap()
+        app.buttons["tag.editor.save"].tap()
+
+        let travelRow = app.buttons["Edit Travel tag"]
+        scrollUntilHittable(travelRow, in: app)
+        XCTAssertEqual(travelRow.value as? String, "Used by 0 reminders")
+        travelRow.tap()
+
+        replaceText(in: app.textFields["tag.editor.name"], with: "Trips")
+        app.buttons["tag.color.purple"].tap()
+        scrollUntilHittable(app.buttons["tag.icon.house"], in: app)
+        app.buttons["tag.icon.house"].tap()
+        app.buttons["tag.editor.save"].tap()
+
+        let tripsRow = app.buttons["Edit Trips tag"]
+        scrollUntilHittable(tripsRow, in: app)
+        XCTAssertTrue(tripsRow.exists)
+        addScreenshot(named: "Manage Tags", of: app)
+        app.buttons["Done"].tap()
+        XCTAssertTrue(app.buttons["Trips filter"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.buttons["Travel filter"].exists)
+    }
+
+    func testDeletingAnInUseTagRequiresConfirmationAndKeepsTheReminder() {
+        let app = makeApp()
+        app.launch()
+
+        app.buttons["New reminder"].firstMatch.tap()
+        app.textFields["reminder.title"].tap()
+        app.textFields["reminder.title"].typeText("Tagged reminder")
+        app.buttons["Tag Work"].tap()
+        app.buttons["reminder.save"].tap()
+        XCTAssertTrue(app.staticTexts["Tagged reminder"].waitForExistence(timeout: 2))
+
+        openTagManagement(in: app)
+        let workRow = app.buttons["Edit Work tag"]
+        XCTAssertTrue(workRow.waitForExistence(timeout: 2))
+        XCTAssertEqual(workRow.value as? String, "Used by 1 reminder")
+        workRow.swipeLeft()
+        app.buttons["Delete"].tap()
+
+        let alert = app.alerts["Delete “Work”?"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 2))
+        XCTAssertTrue(alert.staticTexts["This removes the tag from 1 reminder. The reminders will not be deleted."].exists)
+        alert.buttons["Delete Tag"].tap()
+
+        XCTAssertFalse(app.buttons["Edit Work tag"].exists)
+        app.buttons["Done"].tap()
+        XCTAssertTrue(app.staticTexts["Tagged reminder"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.buttons["Work filter"].exists)
     }
 
     func testCanCreateAnImportantTaggedReminderSearchAndOpenDetail() {
@@ -86,6 +158,19 @@ final class TimeLoreUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts["Section reminder"].exists)
         openSection.tap()
         XCTAssertTrue(app.staticTexts["Section reminder"].waitForExistence(timeout: 2))
+    }
+
+    func testBrandLogoCompactsWhenTheReminderListScrolls() {
+        let app = makeApp()
+        app.launch()
+
+        for index in 1...10 {
+            createReminder(named: "Scrollable reminder \(index)", in: app)
+        }
+
+        XCTAssertTrue(app.images["brand.logo.expanded"].exists)
+        app.swipeUp()
+        XCTAssertTrue(app.images["brand.logo.compact"].waitForExistence(timeout: 2))
     }
 
     func testDirectionalSwipesProgressAndOrganizeAReminder() {
@@ -138,14 +223,12 @@ final class TimeLoreUITests: XCTestCase {
         app.buttons["detail.moreActions"].tap()
         app.buttons["Restore"].tap()
 
-        app.buttons["detail.moreActions"].tap()
-        app.buttons["Delete"].tap()
-        app.alerts["Delete this reminder?"].buttons["Cancel"].tap()
+        let deleteAlert = openDeleteAlert(in: app)
+        deleteAlert.buttons["Cancel"].tap()
         XCTAssertTrue(app.navigationBars["Reminder"].exists)
 
-        app.buttons["detail.moreActions"].tap()
-        app.buttons["Delete"].tap()
-        app.alerts["Delete this reminder?"].buttons["Delete"].tap()
+        let confirmedDeleteAlert = openDeleteAlert(in: app)
+        confirmedDeleteAlert.buttons["Delete"].tap()
         XCTAssertTrue(app.staticTexts["Remember what, and why."].waitForExistence(timeout: 2))
     }
 
@@ -161,5 +244,50 @@ final class TimeLoreUITests: XCTestCase {
         app.textFields["reminder.title"].typeText(title)
         app.buttons["reminder.save"].tap()
         XCTAssertTrue(app.staticTexts[title].waitForExistence(timeout: 2))
+    }
+
+    private func openTagManagement(in app: XCUIApplication) {
+        app.buttons["reminder.moreActions"].tap()
+        let manageTags = app.buttons["Manage Tags"]
+        XCTAssertTrue(manageTags.waitForExistence(timeout: 2))
+        manageTags.tap()
+    }
+
+    private func scrollUntilHittable(
+        _ element: XCUIElement,
+        in app: XCUIApplication
+    ) {
+        for _ in 0..<5 where !element.isHittable {
+            app.swipeUp()
+        }
+        XCTAssertTrue(element.isHittable)
+    }
+
+    private func replaceText(in field: XCUIElement, with replacement: String) {
+        field.tap()
+        let currentValue = field.value as? String ?? ""
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: currentValue.count))
+        field.typeText(replacement)
+    }
+
+    private func addScreenshot(named name: String, of app: XCUIApplication) {
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    private func openDeleteAlert(in app: XCUIApplication) -> XCUIElement {
+        app.buttons["detail.moreActions"].tap()
+        let deleteMenuButton = app.buttons["Delete"].firstMatch
+        XCTAssertTrue(deleteMenuButton.waitForExistence(timeout: 2))
+        deleteMenuButton.tap()
+
+        let alert = app.alerts["Delete this reminder?"]
+        if !alert.waitForExistence(timeout: 1), deleteMenuButton.exists {
+            deleteMenuButton.tap()
+        }
+        XCTAssertTrue(alert.waitForExistence(timeout: 2))
+        return alert
     }
 }

@@ -95,7 +95,7 @@ struct ReminderDetailView: View {
                 Section("Tags") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            ForEach(sortedTags) { tag in ReminderTagChip(name: tag.name) }
+                            ForEach(sortedTags) { tag in ReminderTagChip(tag: tag) }
                         }
                     }
                 }

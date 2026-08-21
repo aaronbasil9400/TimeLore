@@ -62,11 +62,14 @@ Acceptance criteria:
 - Open, Completed, and Archived sections collapse independently and remember the user’s choices.
 - Archiving preserves completion status; restoring returns a reminder to the correct section.
 - Reminders support multiple normalized tags and tag filtering.
+- Home overflow provides tag management for create, rename, color/icon editing, and safe deletion.
+- Renaming a tag updates recurring-series templates; deleting a tag only detaches it from reminders and requires confirmation when in use.
+- Renamed or deleted default tags are not silently recreated by seeding.
 - Priority and Important remain independent across lifecycle transitions.
 - Delete requires confirmation.
 - Unit and UI tests cover status transitions and maintenance flows.
 
-**Status: Complete.** Maintenance, Priority, Important, tag, sorting, and directional-swipe behavior are implemented and covered by domain and UI tests on an iPhone 17 simulator.
+**Status: Complete.** Maintenance, Priority, Important, editable tag appearance and lifecycle management, sorting, and directional-swipe behavior are implemented and covered by domain and UI tests on an iPhone 17 simulator.
 
 ## Milestone 3 — Notify Reliably
 
@@ -110,7 +113,7 @@ Acceptance criteria:
 - Archive, restore, completion, reopening, deletion, app relaunch, timezone changes, and notification reconciliation do not create duplicate occurrences or pending requests.
 - Recurrence date calculations use calendar/timezone semantics and have focused tests for daylight-saving and end-of-month boundaries.
 
-**Status: In acceptance review.** The recurrence domain, custom weekly/monthly/yearly editor and detail controls, scoped edit/delete decisions, notification identifiers, and focused automated coverage are implemented. Device acceptance of notification delivery and timezone behavior remains. The latest simulator validation passed the 37 unit/persistence tests and 8 UI tests; system-notification delivery is still a manual device check.
+**Status: In acceptance review.** The recurrence domain, custom weekly/monthly/yearly editor and detail controls, scoped edit/delete decisions, notification identifiers, and focused automated coverage are implemented. Device acceptance of notification delivery and timezone behavior remains. The latest simulator validation passed the 43 unit/persistence tests and 11 UI tests; system-notification delivery is still a manual device check.
 
 MVP decisions:
 
@@ -134,7 +137,7 @@ Acceptance criteria:
 - Removing an attachment or deleting its reminder cleans up only the associated app-owned payload.
 - Attachment lifecycle and cleanup have focused persistence/service tests; add/preview/remove have UI coverage.
 
-**Status: In acceptance review.** Local metadata/payload storage, Photos and Files pickers, photo/file thumbnail previews, Quick Look preview, removal, cleanup, and focused automated coverage are implemented. The latest simulator validation passed the 37 unit/persistence tests and 8 UI tests, including the attachment-control contract and normal/recurring file-persistence coverage. System-picker and on-device preview acceptance remain.
+**Status: In acceptance review.** Local metadata/payload storage, Photos and Files pickers, photo/file thumbnail previews, Quick Look preview, removal, cleanup, and focused automated coverage are implemented. The latest simulator validation passed the 43 unit/persistence tests and 11 UI tests, including the attachment-control contract and normal/recurring file-persistence coverage. System-picker and on-device preview acceptance remain.
 
 MVP decisions:
 
